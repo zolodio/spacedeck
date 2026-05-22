@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERIDIAN — Command Surface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030509;
+      --surface: rgba(5, 11, 22, 0.93);
+      --border: rgba(0, 210, 185, 0.22);
+      --border-hi: rgba(0, 210, 185, 0.65);
+      --accent: #00D2B9;
+      --accent-glow: rgba(0, 210, 185, 0.28);
+      --a2: #FF4B6E;
+      --a3: #FFB020;
+      --a4: #7B6FE8;
+      --text: #BDD6E6;
+      --dim: rgba(189, 214, 230, 0.42);
+      --orb: 'Orbitron', monospace;
+      --mono: 'Space Mono', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: var(--mono);
+      color: var(--text);
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #bg {
+      position: fixed; inset: 0; z-index: 0;
+      width: 100%; height: 100%;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 2;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg,
+        transparent 0, transparent 3px,
+        rgba(0,0,0,0.055) 3px, rgba(0,0,0,0.055) 4px);
+    }
+    #surface {
+      position: relative; z-index: 1;
+      display: flex; align-items: stretch;
+      width: 100vw; height: 100vh;
+      padding: 1.3vh 0.8vw; gap: 0.55vw;
+    }
+
+    /* ── PANELS ── */
+    .panel {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.25s;
+      backdrop-filter: blur(14px);
+    }
+    .panel.on { opacity: 1; transform: translateY(0); }
+    .panel:hover { border-color: rgba(0,210,185,0.45); }
+
+    /* Corner accents */
+    .panel::before, .panel::after {
+      content: ''; position: absolute;
+      width: 9px; height: 9px;
+      z-index: 10; pointer-events: none;
+    }
+    .panel::before { top: 5px; left: 5px;
+      border-top: 1.5px solid var(--accent);
+      border-left: 1.5px solid var(--accent); }
+    .panel::after { bottom: 5px; right: 5px;
+      border-bottom: 1.5px solid var(--accent);
+      border-right: 1.5px solid var(--accent); }
+
+    /* Panel header */
+    .ph {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0.65vh 1.1vh;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--orb); font-size: 0.62vh;
+      letter-spacing: 0.32em; color: var(--accent);
+      flex-shrink: 0;
+    }
+    .ph .ind {
+      display: flex; align-items: center;
+      gap: 0.5vw; font-size: 0.58vh; color: var(--dim);
+      font-family: var(--mono);
+    }
+    .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent);
+      animation: pdot 2.2s ease-in-out infinite;
+    }
+    @keyframes pdot {
+      0%,100%{opacity:1;transform:scale(1)}
+      50%{opacity:0.35;transform:scale(0.65)}
+    }
+    .pb { flex: 1; overflow: hidden; position: relative; }
+
+    /* Panel widths */
+    #p-clock   { width: 12.2vw; flex-shrink: 0; }
+    #p-weather { width: 14.2vw; flex-shrink: 0; }
+    #p-hub     { flex: 1; min-width: 0; }
+    #p-tasks   { width: 14.2vw; flex-shrink: 0; }
+    #p-media   { width: 10.8vw; flex-shrink: 0; }
+    #p-sys     { width: 12.2vw; flex-shrink: 0; }
+
+    /* ══════════════════════════════
+       CLOCK PANEL
+    ══════════════════════════════ */
+    .clock-body {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; gap: 0.7vh; padding: 1vh;
+    }
+    .t-hhmm {
+      font-family: var(--orb); font-weight: 900;
+      font-size: 6.2vh; letter-spacing: 0.04em;
+      color: #fff; line-height: 1;
+      text-shadow: 0 0 28px var(--accent), 0 0 55px var(--accent-glow);
+    }
+    .t-ss {
+      font-family: var(--orb); font-size: 2.2vh;
+      color: var(--accent); letter-spacing: 0.2em;
+    }
+    .analog-svg { width: 8.5vh; height: 8.5vh; flex-shrink: 0; }
+    .t-date {
+      font-size: 0.68vh; letter-spacing: 0.22em;
+      color: var(--dim); text-align: center; line-height: 1.8;
+    }
+    .day-prog {
+      width: 88%; display: flex; flex-direction: column; gap: 0.35vh;
+    }
+    .day-prog-lbl {
+      display: flex; justify-content: space-between;
+      font-size: 0.62vh; color: var(--dim); letter-spacing: 0.18em;
+    }
+    .day-prog-track {
+      height: 2px; background: rgba(255,255,255,0.08);
+      border-radius: 2px; overflow: hidden;
+    }
+    .day-prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--a4), var(--accent));
+    }
+
+    /* ══════════════════════════════
+       WEATHER PANEL
+    ══════════════════════════════ */
+    .wx-body {
+      display: flex; flex-direction: column;
+      height: 100%; padding: 1.1vh 1.3vh; gap: 0.7vh;
+    }
+    .wx-loc {
+      font-size: 0.72vh; color: var(--dim);
+      letter-spacing: 0.2em;
+      display: flex; align-items: center; gap: 0.5vw;
+    }
+    .wx-loc::before { content: '⊕'; color: var(--accent); }
+    .wx-main {
+      display: flex; align-items: flex-end; gap: 0.8vh;
+    }
+    .wx-temp {
+      font-family: var(--orb); font-weight: 900;
+      font-size: 6.5vh; color: #fff; line-height: 1;
+    }
+    .wx-unit {
+      font-family: var(--orb); font-size: 2.2vh;
+      color: var(--dim); padding-bottom: 0.5vh;
+    }
+    .wx-emoji { font-size: 4.5vh; line-height: 1; }
+    .wx-cond {
+      font-size: 0.82vh; letter-spacing: 0.25em; color: var(--accent);
+    }
+    .wx-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.45vh;
+    }
+    .wx-stat {
+      font-size: 0.68vh; color: var(--dim);
+    }
+    .wx-stat b { color: var(--text); font-weight: 700; font-style: normal; }
+    .wx-fc {
+      display: flex; gap: 0.4vw;
+      border-top: 1px solid var(--border);
+      padding-top: 0.7vh; margin-top: auto;
+    }
+    .fc-day {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 0.25vh;
+      font-size: 0.62vh; color: var(--dim);
+    }
+    .fc-day .fc-dn { letter-spacing: 0.15em; color: var(--accent); }
+    .fc-day .fc-ic { font-size: 1.4vh; }
+    .fc-day .fc-temps { display: flex; gap: 0.3vw; }
+    .fc-day .fc-hi { color: var(--text); }
+
+    /* ══════════════════════════════
+       HUB (CENTER)
+    ══════════════════════════════ */
+    .hub-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .hub-tab {
+      padding: 0.7vh 1.4vh;
+      font-family: var(--orb); font-size: 0.6vh;
+      letter-spacing: 0.3em; color: var(--dim);
+      cursor: pointer; transition: all 0.18s;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .hub-tab:hover { color: var(--accent); }
+    .hub-tab.active {
+      color: var(--accent);
+      background: rgba(0,210,185,0.07);
+    }
+    .hub-tab.active::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1.5px; background: var(--accent);
+    }
+    .hub-view { display: none; height: 100%; }
+    .hub-view.active { display: flex; }
+
+    /* LAUNCH */
+    #vl { flex-direction: column; padding: 0.9vh; overflow-y: auto; }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(5.8vh, 1fr));
+      gap: 0.6vh; align-content: start;
+    }
+    .app-item {
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.28vh;
+      background: rgba(0,210,185,0.04);
+      border: 1px solid var(--border);
+      border-radius: 3px; cursor: pointer;
+      transition: all 0.14s; padding: 0.35vh;
+      text-align: center; overflow: hidden;
+    }
+    .app-item:hover {
+      background: rgba(0,210,185,0.11);
+      border-color: var(--accent);
+      transform: scale(1.06);
+    }
+    .app-item:active { transform: scale(0.96); }
+    .ai { font-size: 2.4vh; line-height: 1; }
+    .an {
+      font-size: 0.5vh; letter-spacing: 0.1em;
+      word-break: break-word; color: var(--dim);
+      line-height: 1.2;
+    }
+    .app-item:hover .an { color: var(--text); }
+    .app-add { border-style: dashed; opacity: 0.55; }
+    .app-add:hover { opacity: 1; }
+
+    /* NOTES */
+    #vn { flex-direction: column; padding: 0.9vh; gap: 0.6vh; }
+    .notes-area {
+      flex: 1; background: transparent; border: none;
+      outline: none; color: var(--text);
+      font-family: var(--mono); font-size: 1.1vh;
+      line-height: 1.85; resize: none; padding: 0.4vh;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+      caret-color: var(--accent);
+    }
+    .notes-footer {
+      display: flex; justify-content: space-between;
+      align-items: center; border-top: 1px solid var(--border);
+      padding-top: 0.4vh; font-size: 0.6vh; color: var(--dim);
+    }
+    .btn-sm {
+      background: none; border: 1px solid currentColor;
+      font-family: var(--mono); font-size: 0.6vh;
+      padding: 0.3vh 0.8vh; cursor: pointer;
+      letter-spacing: 0.18em; transition: all 0.15s;
+    }
+    .btn-danger { color: var(--a2); }
+    .btn-danger:hover { background: var(--a2); color: var(--bg); }
+
+    /* SEARCH */
+    #vs {
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5vh; gap: 1.4vh;
+    }
+    .srch-title {
+      font-family: var(--orb); font-size: 1.4vh;
+      color: var(--accent); letter-spacing: 0.45em;
+    }
+    .srch-wrap {
+      width: 100%; display: flex; gap: 0.8vh; max-width: 60vh;
+    }
+    .srch-in {
+      flex: 1; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--mono);
+      font-size: 1.2vh; padding: 0.9vh 1.3vh;
+      outline: none; caret-color: var(--accent);
+      transition: border-color 0.18s;
+    }
+    .srch-in:focus { border-color: var(--accent); }
+    .srch-btn {
+      background: var(--accent); border: none;
+      color: var(--bg); font-family: var(--orb);
+      font-size: 0.65vh; letter-spacing: 0.3em;
+      padding: 0.9vh 1.4vh; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .srch-btn:hover { opacity: 0.8; }
+    .srch-quick {
+      display: flex; flex-wrap: wrap; gap: 0.65vh;
+      justify-content: center;
+    }
+    .qbtn {
+      background: rgba(0,210,185,0.05);
+      border: 1px solid var(--border);
+      color: var(--dim); font-family: var(--mono);
+      font-size: 0.68vh; padding: 0.38vh 0.9vh;
+      cursor: pointer; letter-spacing: 0.15em;
+      transition: all 0.14s;
+    }
+    .qbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ══════════════════════════════
+       TASKS PANEL
+    ══════════════════════════════ */
+    .tasks-body {
+      display: flex; flex-direction: column;
+      height: 100%; padding: 0.9vh; gap: 0.65vh;
+    }
+    .task-add {
+      display: flex; gap: 0.45vh; flex-shrink: 0;
+    }
+    .task-in {
+      flex: 1; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--mono);
+      font-size: 0.78vh; padding: 0.48vh 0.75vh;
+      outline: none; caret-color: var(--accent);
+    }
+    .task-in:focus { border-color: var(--accent); }
+    .task-add-btn {
+      background: var(--accent); border: none;
+      color: var(--bg); font-family: var(--orb);
+      font-size: 0.8vh; width: 3vh; cursor: pointer;
+      border-radius: 2px; transition: opacity 0.15s;
+    }
+    .task-add-btn:hover { opacity: 0.8; }
+    .task-list {
+      flex: 1; overflow-y: auto; display: flex;
+      flex-direction: column; gap: 0.38vh;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    .task-item {
+      display: flex; align-items: center; gap: 0.55vh;
+      padding: 0.45vh 0.55vh;
+      background: rgba(255,255,255,0.018);
+      border: 1px solid transparent;
+      border-radius: 2px; cursor: pointer;
+      transition: all 0.14s;
+    }
+    .task-item:hover {
+      border-color: var(--border);
+      background: rgba(0,210,185,0.038);
+    }
+    .task-chk {
+      width: 1.35vh; height: 1.35vh; flex-shrink: 0;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 0.75vh; transition: all 0.18s;
+    }
+    .task-item.done .task-chk {
+      background: var(--accent); border-color: var(--accent);
+      color: var(--bg);
+    }
+    .task-txt { flex: 1; font-size: 0.82vh; line-height: 1.3; transition: all 0.18s; }
+    .task-item.done .task-txt { text-decoration: line-through; color: var(--dim); }
+    .task-pri {
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0; cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .task-pri:hover { transform: scale(1.5); }
+    .task-del {
+      opacity: 0; background: none; border: none;
+      color: var(--a2); font-size: 0.85vh;
+      cursor: pointer; transition: opacity 0.14s;
+      flex-shrink: 0;
+    }
+    .task-item:hover .task-del { opacity: 1; }
+    .task-footer {
+      font-size: 0.62vh; color: var(--dim);
+      letter-spacing: 0.15em;
+      padding-top: 0.45vh; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between;
+    }
+
+    /* ══════════════════════════════
+       MEDIA / SIGNAL PANEL
+    ══════════════════════════════ */
+    .media-body {
+      display: flex; flex-direction: column;
+      height: 100%; align-items: center;
+      padding: 0.8vh; gap: 0.6vh;
+    }
+    #mc { width: 100%; flex-shrink: 0; }
+    .media-info {
+      text-align: center; flex: 1;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 0.35vh;
+    }
+    .m-track {
+      font-size: 0.8vh; color: var(--text);
+      letter-spacing: 0.15em; line-height: 1.4;
+    }
+    .m-artist {
+      font-size: 0.65vh; color: var(--dim); letter-spacing: 0.2em;
+    }
+    .vu-wrap {
+      display: flex; align-items: flex-end; gap: 1px;
+      height: 1.8vh; width: 100%;
+    }
+    .vu-b {
+      flex: 1; min-height: 2px; border-radius: 1px;
+      transition: height 0.07s ease-out;
+    }
+    .m-ctrls {
+      display: flex; align-items: center; gap: 1.1vh;
+    }
+    .m-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text); width: 3.2vh; height: 3.2vh;
+      border-radius: 2px; cursor: pointer;
+      font-size: 1.1vh; transition: all 0.14s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .m-btn.play {
+      width: 4.2vh; height: 4.2vh;
+      border-color: var(--accent); color: var(--accent);
+      font-size: 1.4vh;
+    }
+    .m-status {
+      font-size: 0.58vh; letter-spacing: 0.2em; color: var(--dim);
+    }
+
+    /* ══════════════════════════════
+       SYSTEM TELEMETRY
+    ══════════════════════════════ */
+    .sys-body {
+      display: flex; flex-direction: column;
+      height: 100%; padding: 0.9vh 1.1vh;
+      gap: 0.7vh; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    .sys-row {
+      display: flex; flex-direction: column; gap: 0.28vh;
+    }
+    .sys-lbl {
+      display: flex; justify-content: space-between;
+      font-size: 0.62vh; color: var(--dim); letter-spacing: 0.18em;
+    }
+    .sys-lbl span { color: var(--text); }
+    .sys-trk {
+      height: 2px; background: rgba(255,255,255,0.07);
+      border-radius: 2px; overflow: hidden;
+    }
+    .sys-fill { height: 100%; border-radius: 2px; transition: width 0.9s ease; }
+    .sys-hr { border: none; border-top: 1px solid var(--border); margin: 0.1vh 0; }
+    .sys-rd {
+      display: flex; justify-content: space-between;
+      font-size: 0.62vh; color: var(--dim); letter-spacing: 0.15em;
+    }
+    .sys-rd span { color: var(--accent); }
+
+    /* ══════════════════════════════
+       BOOT
+    ══════════════════════════════ */
+    #boot {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1.8vh; transition: opacity 0.5s;
+    }
+    #boot.off { opacity: 0; pointer-events: none; }
+    .boot-logo {
+      font-family: var(--orb); font-size: 5.5vh;
+      font-weight: 900; letter-spacing: 0.55em;
+      color: var(--accent);
+      text-shadow: 0 0 45px var(--accent-glow), 0 0 90px rgba(0,210,185,0.12);
+    }
+    .boot-sub { font-size: 0.85vh; letter-spacing: 0.55em; color: var(--dim); }
+    .boot-track { width: 28vw; height: 1px; background: rgba(255,255,255,0.09); overflow: hidden; }
+    .boot-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+    .boot-stat { font-size: 0.68vh; color: var(--dim); letter-spacing: 0.32em; }
+
+    /* ══════════════════════════════
+       RIPPLE
+    ══════════════════════════════ */
+    .rpl {
+      position: fixed; border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      animation: rpl-anim 0.55s ease-out forwards;
+    }
+    @keyframes rpl-anim {
+      0%   { width: 0; height: 0; opacity: 0.75; }
+      100% { width: 7vh; height: 7vh; opacity: 0; }
+    }
+
+    /* ══════════════════════════════
+       MODAL
+    ══════════════════════════════ */
+    #modal {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.72);
+      display: none; align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+    #modal.open { display: flex; }
+    .modal-box {
+      background: rgba(6,12,24,0.98);
+      border: 1px solid var(--border-hi);
+      padding: 2vh 2.4vh;
+      display: flex; flex-direction: column;
+      gap: 1.1vh; min-width: 24vw;
+    }
+    .modal-title {
+      font-family: var(--orb); font-size: 0.88vh;
+      color: var(--accent); letter-spacing: 0.42em;
+    }
+    .modal-in {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--mono);
+      font-size: 0.95vh; padding: 0.58vh 0.8vh;
+      outline: none; width: 100%;
+      caret-color: var(--accent);
+    }
+    .modal-in:focus { border-color: var(--accent); }
+    .modal-acts { display: flex; gap: 0.7vh; justify-content: flex-end; }
+    .mbtn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text); font-family: var(--mono);
+      font-size: 0.65vh; padding: 0.38vh 1.1vh;
+      cursor: pointer; letter-spacing: 0.2em;
+      transition: all 0.14s;
+    }
+    .mbtn:hover { border-color: var(--text); }
+    .mbtn.pri { border-color: var(--accent); color: var(--accent); }
+    .mbtn.del { border-color: var(--a2); color: var(--a2); }
+
+    /* ── MISC ── */
+    #fps {
+      position: fixed; top: 0.45vh; right: 0.5vw;
+      font-size: 0.58vh; color: var(--dim);
+      letter-spacing: 0.22em; z-index: 3;
+      pointer-events: none;
+    }
+    ::-webkit-scrollbar { width: 2.5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── THEME SWITCHER ── */
+    #theme-sw {
+      position: fixed; bottom: 1.2vh; right: 1vw;
+      display: flex; gap: 0.5vh; z-index: 10;
+    }
+    .thm-btn {
+      width: 1.1vh; height: 1.1vh; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer; transition: transform 0.15s;
+    }
+    .thm-btn:hover { transform: scale(1.4); }
+    .thm-btn.active { border-color: #fff; }
+  </style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-logo">MERIDIAN</div>
+  <div class="boot-sub">COMMAND SURFACE // INITIALIZING SYSTEMS</div>
+  <div class="boot-track"><div class="boot-fill" id="bfill"></div></div>
+  <div class="boot-stat" id="bstat">STANDBY</div>
+</div>
+
+<!-- FPS -->
+<div id="fps">● 60 FPS</div>
+
+<!-- THEME SWITCHER -->
+<div id="theme-sw">
+  <div class="thm-btn active" style="background:#00D2B9" data-theme="teal" title="Teal"></div>
+  <div class="thm-btn" style="background:#FFB020" data-theme="amber" title="Amber"></div>
+  <div class="thm-btn" style="background:#7B6FE8" data-theme="violet" title="Violet"></div>
+  <div class="thm-btn" style="background:#FF4B6E" data-theme="rose" title="Rose"></div>
+</div>
+
+<!-- MAIN SURFACE -->
+<div id="surface">
+
+  <!-- 1 · CHRONOS -->
+  <div class="panel" id="p-clock">
+    <div class="ph">CHRONOS<div class="ind"><div class="dot"></div>SYNC</div></div>
+    <div class="pb">
+      <div class="clock-body">
+        <div class="t-hhmm" id="t-hm">00:00</div>
+        <div class="t-ss" id="t-s">:00</div>
+        <svg class="analog-svg" id="asvg" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,210,185,0.18)" stroke-width="0.5"/>
+          <g id="ticks"></g>
+          <line id="hh" x1="50" y1="50" x2="50" y2="23" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line id="hm" x1="50" y1="50" x2="50" y2="14" stroke="rgba(0,210,185,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+          <line id="hs" x1="50" y1="55" x2="50" y2="10" stroke="#FF4B6E" stroke-width="0.8" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="2.2" fill="var(--accent)"/>
+        </svg>
+        <div class="t-date" id="t-date">—</div>
+        <div class="day-prog">
+          <div class="day-prog-lbl">
+            <span>DAY PROGRESS</span>
+            <span id="dpct">0%</span>
+          </div>
+          <div class="day-prog-track">
+            <div class="day-prog-fill" id="dfill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · ATMOSPHERE -->
+  <div class="panel" id="p-weather">
+    <div class="ph">ATMOSPHERE<div class="ind"><div class="dot" style="background:var(--a3)"></div><span id="wxst">LOCATING</span></div></div>
+    <div class="pb">
+      <div class="wx-body">
+        <div class="wx-loc" id="wxloc">ACQUIRING COORDINATES...</div>
+        <div class="wx-main">
+          <div class="wx-temp" id="wxt">--</div>
+          <div class="wx-unit">°F</div>
+          <div class="wx-emoji" id="wxe">◌</div>
+        </div>
+        <div class="wx-cond" id="wxc">PENDING TELEMETRY</div>
+        <div class="wx-grid">
+          <div class="wx-stat">WIND&nbsp;<b id="wxw">--</b></div>
+          <div class="wx-stat">HUMID&nbsp;<b id="wxh">--</b></div>
+          <div class="wx-stat">FEELS&nbsp;<b id="wxf">--</b></div>
+          <div class="wx-stat">DEW&nbsp;<b id="wxd">--</b></div>
+        </div>
+        <div class="wx-fc" id="wxfc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 · HUB -->
+  <div class="panel" id="p-hub">
+    <div class="hub-tabs" id="hub-tabs">
+      <div class="hub-tab active" data-tab="l">LAUNCH</div>
+      <div class="hub-tab" data-tab="n">NOTES</div>
+      <div class="hub-tab" data-tab="s">SEARCH</div>
+    </div>
+    <div class="pb">
+      <!-- LAUNCH -->
+      <div class="hub-view active" id="vl">
+        <div class="app-grid" id="agrid"></div>
+      </div>
+      <!-- NOTES -->
+      <div class="hub-view" id="vn">
+        <textarea class="notes-area" id="narea"
+          placeholder="// NOTES — AUTO-SAVED&#10;// PRESS ALT+2 TO FOCUS"></textarea>
+        <div class="notes-footer">
+          <span id="ncnt">0 CHARS · 0 WORDS</span>
+          <button class="btn-sm btn-danger" id="nclr">CLEAR</button>
+        </div>
+      </div>
+      <!-- SEARCH -->
+      <div class="hub-view" id="vs">
+        <div class="srch-title">SEARCH COMMAND</div>
+        <div class="srch-wrap">
+          <input class="srch-in" id="sin" placeholder="QUERY OR URL..." autocomplete="off">
+          <button class="srch-btn" id="sbtn">EXECUTE</button>
+        </div>
+        <div class="srch-quick">
+          <button class="qbtn" onclick="go('https://google.com')">GOOGLE</button>
+          <button class="qbtn" onclick="go('https://github.com')">GITHUB</button>
+          <button class="qbtn" onclick="go('https://youtube.com')">YOUTUBE</button>
+          <button class="qbtn" onclick="go('https://mail.google.com')">GMAIL</button>
+          <button class="qbtn" onclick="go('https://notion.so')">NOTION</button>
+          <button class="qbtn" onclick="go('https://calendar.google.com')">CALENDAR</button>
+          <button class="qbtn" onclick="go('https://open.spotify.com')">SPOTIFY</button>
+          <button class="qbtn" onclick="go('https://claude.ai')">CLAUDE</button>
+          <button class="qbtn" onclick="go('https://x.com')">X/TWITTER</button>
+          <button class="qbtn" onclick="go('https://reddit.com')">REDDIT</button>
+          <button class="qbtn" onclick="go('https://news.ycombinator.com')">HACKERNEWS</button>
+          <button class="qbtn" onclick="go('https://maps.google.com')">MAPS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · MISSION LOG -->
+  <div class="panel" id="p-tasks">
+    <div class="ph">MISSION LOG<div class="ind"><span id="tcnt">0 ACTIVE</span></div></div>
+    <div class="pb">
+      <div class="tasks-body">
+        <div class="task-add">
+          <input class="task-in" id="tin" placeholder="NEW OBJECTIVE...">
+          <button class="task-add-btn" id="tadd">+</button>
+        </div>
+        <div class="task-list" id="tlist"></div>
+        <div class="task-footer">
+          <span id="tstats">NO OBJECTIVES</span>
+          <span id="tcmpl"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 · SIGNAL -->
+  <div class="panel" id="p-media">
+    <div class="ph">SIGNAL<div class="ind"><div class="dot" style="background:var(--a4)"></div>MONITORING</div></div>
+    <div class="pb">
+      <div class="media-body">
+        <canvas id="mc"></canvas>
+        <div class="media-info">
+          <div class="m-track" id="mtrack">AWAITING SIGNAL</div>
+          <div class="m-artist" id="martist">NO MEDIA DETECTED</div>
+        </div>
+        <div class="vu-wrap" id="vuwrap"></div>
+        <div class="m-ctrls">
+          <button class="m-btn" id="mprev">⏮</button>
+          <button class="m-btn play" id="mplay">⏯</button>
+          <button class="m-btn" id="mnext">⏭</button>
+        </div>
+        <div class="m-status" id="mstatus">MIC: CLICK ⏯ TO ENABLE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 · TELEMETRY -->
+  <div class="panel" id="p-sys">
+    <div class="ph">TELEMETRY<div class="ind"><div class="dot"></div>LIVE</div></div>
+    <div class="pb">
+      <div class="sys-body" id="sysbody"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="mtitle">CONFIGURE APP</div>
+    <input class="modal-in" id="micon" placeholder="ICON (emoji, e.g. 🔗)">
+    <input class="modal-in" id="mname" placeholder="APP NAME">
+    <input class="modal-in" id="murl" placeholder="URL (https://...)">
+    <div class="modal-acts">
+      <button class="mbtn del" id="mdel" style="display:none">DELETE</button>
+      <button class="mbtn" id="mcancel">CANCEL</button>
+      <button class="mbtn pri" id="msave">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   MERIDIAN — Command Surface v1.0
+   © 2025 — Open for personal use
+═══════════════════════════════════════════════════════════ */
+
+const $ = id => document.getElementById(id);
+const pad = (n, w=2) => String(Math.floor(n)).padStart(w, '0');
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+const DAYS = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const MNS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+// ── WMO WEATHER CODES ──────────────────────────────────────
+const WMO = {
+  0:{t:'CLEAR SKY',i:'☀️'},1:{t:'MAINLY CLEAR',i:'🌤️'},
+  2:{t:'PARTLY CLOUDY',i:'⛅'},3:{t:'OVERCAST',i:'☁️'},
+  45:{t:'FOG',i:'🌫️'},48:{t:'RIME FOG',i:'🌫️'},
+  51:{t:'LIGHT DRIZZLE',i:'🌦️'},53:{t:'DRIZZLE',i:'🌧️'},55:{t:'HEAVY DRIZZLE',i:'🌧️'},
+  61:{t:'LIGHT RAIN',i:'🌧️'},63:{t:'RAIN',i:'🌧️'},65:{t:'HEAVY RAIN',i:'🌧️'},
+  71:{t:'LIGHT SNOW',i:'🌨️'},73:{t:'SNOW',i:'❄️'},75:{t:'HEAVY SNOW',i:'❄️'},
+  77:{t:'SNOW GRAINS',i:'❄️'},80:{t:'SHOWERS',i:'🌦️'},81:{t:'SHOWERS',i:'🌧️'},
+  82:{t:'HEAVY SHOWERS',i:'⛈️'},85:{t:'SNOW SHOWERS',i:'🌨️'},86:{t:'HEAVY SNOW SHOWERS',i:'❄️'},
+  95:{t:'THUNDERSTORM',i:'⛈️'},96:{t:'STORM + HAIL',i:'⛈️'},99:{t:'STORM + HAIL',i:'⛈️'},
+};
+
+/* ══════════════════════════════════════════════════════════
+   BACKGROUND CANVAS — stars, aurora, shooting stars, grid
+══════════════════════════════════════════════════════════ */
+(function(){
+  const cvs = $('bg'), ctx = cvs.getContext('2d');
+  let W, H;
+  const NSTARS = 280;
+  const stars = Array.from({length:NSTARS}, () => ({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*1.4+0.2,
+    a:Math.random(), da:(Math.random()-0.5)*0.004
+  }));
+  const auroras = [
+    {y:0.58,h:0.38,rgb:[0,210,185],ph:0,sp:0.00028},
+    {y:0.50,h:0.26,rgb:[123,111,232],ph:1.6,sp:0.00018},
+    {y:0.72,h:0.22,rgb:[0,90,75],ph:3.1,sp:0.00038},
+  ];
+  let shot = null;
+  function resize(){
+    W = cvs.width = window.innerWidth;
+    H = cvs.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize); resize();
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#030509'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(0,210,185,0.022)'; ctx.lineWidth=0.5;
+    const gs = Math.max(W,H)/32;
+    for(let x=0;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // Aurora
+    auroras.forEach(a=>{
+      a.ph+=a.sp;
+      const amp=(Math.sin(a.ph)+1)*0.5;
+      const al=amp*0.055+0.018;
+      const [r,g,b]=a.rgb;
+      const grad=ctx.createLinearGradient(0,a.y*H,0,(a.y+a.h)*H);
+      grad.addColorStop(0,`rgba(${r},${g},${b},0)`);
+      grad.addColorStop(0.35,`rgba(${r},${g},${b},${al})`);
+      grad.addColorStop(0.65,`rgba(${r},${g},${b},${al*0.5})`);
+      grad.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      ctx.beginPath(); ctx.moveTo(0,a.y*H);
+      for(let x=0;x<=W;x+=18){
+        const wave=Math.sin(x*0.0025+a.ph*2.5)*H*0.028;
+        ctx.lineTo(x,a.y*H+wave);
+      }
+      ctx.lineTo(W,(a.y+a.h)*H); ctx.lineTo(0,(a.y+a.h)*H);
+      ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+    });
+    // Stars
+    stars.forEach(s=>{
+      s.a=clamp(s.a+s.da,0,1);
+      if(s.a<=0||s.a>=1)s.da*=-1;
+      ctx.beginPath();
+      ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a*0.68})`;
+      ctx.fill();
+    });
+    // Shooting star
+    if(!shot && Math.random()<0.0025){
+      shot={x:Math.random()*W,y:0,dx:(Math.random()-0.25)*7,dy:Math.random()*4+2,life:1,trail:[]};
+    }
+    if(shot){
+      shot.trail.push({x:shot.x,y:shot.y});
+      if(shot.trail.length>22)shot.trail.shift();
+      shot.x+=shot.dx; shot.y+=shot.dy; shot.life-=0.022;
+      if(shot.trail.length>1){
+        const g=ctx.createLinearGradient(shot.trail[0].x,shot.trail[0].y,shot.x,shot.y);
+        g.addColorStop(0,'rgba(255,255,255,0)');
+        g.addColorStop(1,`rgba(0,210,185,${shot.life})`);
+        ctx.strokeStyle=g; ctx.lineWidth=1.5;
+        ctx.beginPath();
+        shot.trail.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+        ctx.stroke();
+      }
+      if(shot.life<=0||shot.x>W+100||shot.y>H+100)shot=null;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════════════════════
+   FPS COUNTER
+══════════════════════════════════════════════════════════ */
+(function(){
+  let f=0,lt=performance.now();
+  (function tick(t){f++;if(t-lt>=1000){$('fps').textContent=`● ${f} FPS`;f=0;lt=t;}requestAnimationFrame(tick);})(performance.now());
+})();
+
+/* ══════════════════════════════════════════════════════════
+   RIPPLE
+══════════════════════════════════════════════════════════ */
+document.addEventListener('click', e=>{
+  const r=document.createElement('div');
+  r.className='rpl'; r.style.left=e.clientX+'px'; r.style.top=e.clientY+'px';
+  document.body.appendChild(r); setTimeout(()=>r.remove(),600);
+});
+
+/* ══════════════════════════════════════════════════════════
+   BOOT SEQUENCE
+══════════════════════════════════════════════════════════ */
+const BOOT_MSGS = [
+  'LOADING MODULES...','CONNECTING TO SENSORS...',
+  'SYNCING ATOMIC CLOCK...','CALIBRATING TELEMETRY...',
+  'FETCHING ATMOSPHERIC DATA...','ESTABLISHING NETWORK LINK...',
+  'MERIDIAN ONLINE'
+];
+function runBoot(){
+  const fill=$('bfill'), stat=$('bstat');
+  let i=0;
+  function step(){
+    if(i<BOOT_MSGS.length){
+      stat.textContent=BOOT_MSGS[i];
+      fill.style.width=((i+1)/BOOT_MSGS.length*100)+'%';
+      i++;
+      setTimeout(step, i===BOOT_MSGS.length ? 350 : 200);
+    } else {
+      const b=$('boot'); b.classList.add('off');
+      setTimeout(()=>{ b.style.display='none'; revealPanels(); },500);
+    }
+  }
+  setTimeout(step,300);
+}
+function revealPanels(){
+  document.querySelectorAll('.panel').forEach((p,i)=>setTimeout(()=>p.classList.add('on'),i*75));
+}
+
+/* ══════════════════════════════════════════════════════════
+   CLOCK PANEL
+══════════════════════════════════════════════════════════ */
+// Build tick marks
+(function(){
+  const g=document.getElementById('ticks');
+  for(let i=0;i<60;i++){
+    const a=(i/60)*2*Math.PI-Math.PI/2;
+    const maj=i%5===0, r1=maj?39:43, r2=47;
+    const x1=50+r1*Math.cos(a), y1=50+r1*Math.sin(a);
+    const x2=50+r2*Math.cos(a), y2=50+r2*Math.sin(a);
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
+    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('stroke',maj?'rgba(0,210,185,0.7)':'rgba(0,210,185,0.22)');
+    l.setAttribute('stroke-width',maj?'1.2':'0.5');
+    g.appendChild(l);
+  }
+})();
+
+function updateClock(){
+  const n=new Date();
+  const h=n.getHours(),m=n.getMinutes(),s=n.getSeconds(),ms=n.getMilliseconds();
+  $('t-hm').textContent=`${pad(h)}:${pad(m)}`;
+  $('t-s').textContent=`:${pad(s)}`;
+  // Date + day of year
+  const doy=Math.floor((n-new Date(n.getFullYear(),0,0))/86400000);
+  const leap=new Date(n.getFullYear(),1,29).getMonth()===1;
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  $('t-date').textContent=`${DAYS[n.getDay()]} // ${pad(n.getDate())} ${MNS[n.getMonth()]} ${n.getFullYear()}\nDAY ${doy} / ${leap?366:365} · ${tz}`;
+  // Day progress
+  const pct=((h*3600+m*60+s)/86400*100).toFixed(1);
+  $('dfill').style.width=pct+'%'; $('dpct').textContent=pct+'%';
+  // Analog hands (smooth)
+  const sa=(s+ms/1000)/60*360;
+  const ma=(m+s/60)/60*360;
+  const ha=((h%12)+m/60)/12*360;
+  $('hs').setAttribute('transform',`rotate(${sa},50,50)`);
+  $('hm').setAttribute('transform',`rotate(${ma},50,50)`);
+  $('hh').setAttribute('transform',`rotate(${ha},50,50)`);
+}
+setInterval(updateClock,50); updateClock();
+
+/* ══════════════════════════════════════════════════════════
+   WEATHER PANEL
+══════════════════════════════════════════════════════════ */
+async function loadWeather(){
+  if(!navigator.geolocation){ $('wxloc').textContent='NO GEOLOCATION'; return; }
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:lat,longitude:lon}=pos.coords;
+    // Reverse geocode
+    try{
+      const gr=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const gd=await gr.json();
+      const city=gd.address?.city||gd.address?.town||gd.address?.village||gd.address?.county||'UNKNOWN';
+      const state=gd.address?.state_code||'';
+      $('wxloc').textContent=`${city.toUpperCase()}${state?', '+state.toUpperCase():''}`;
+      $('wxst').textContent='LIVE';
+    } catch(e){ $('wxloc').textContent=`${lat.toFixed(2)}°N ${Math.abs(lon).toFixed(2)}°W`; }
+    // Forecast
+    try{
+      const wr=await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`+
+        `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m,dew_point_2m`+
+        `&daily=temperature_2m_max,temperature_2m_min,weather_code`+
+        `&temperature_unit=fahrenheit&wind_speed_unit=mph`+
+        `&timezone=auto&forecast_days=5`
+      );
+      const w=await wr.json(); const c=w.current; const d=w.daily;
+      const wmo=WMO[c.weather_code]||{t:'UNKNOWN',i:'◌'};
+      $('wxt').textContent=Math.round(c.temperature_2m);
+      $('wxe').textContent=wmo.i; $('wxc').textContent=wmo.t;
+      $('wxw').textContent=`${Math.round(c.wind_speed_10m)} MPH`;
+      $('wxh').textContent=`${c.relative_humidity_2m}%`;
+      $('wxf').textContent=`${Math.round(c.apparent_temperature)}°F`;
+      $('wxd').textContent=`${Math.round(c.dew_point_2m)}°F`;
+      // Forecast strip
+      const dns=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+      const fc=$('wxfc'); fc.innerHTML='';
+      for(let i=1;i<Math.min(5,d.time.length);i++){
+        const dt=new Date(d.time[i]+'T12:00:00');
+        const dw=WMO[d.weather_code[i]]||{i:'◌'};
+        fc.innerHTML+=`<div class="fc-day">
+          <span class="fc-dn">${dns[dt.getDay()]}</span>
+          <span class="fc-ic">${dw.i}</span>
+          <div class="fc-temps">
+            <span class="fc-hi">${Math.round(d.temperature_2m_max[i])}°</span>
+            <span style="color:var(--dim)">${Math.round(d.temperature_2m_min[i])}°</span>
+          </div></div>`;
+      }
+    } catch(e){ $('wxc').textContent='SIGNAL LOST'; }
+  }, ()=>{ $('wxloc').textContent='PERMISSION DENIED'; $('wxst').textContent='OFFLINE'; });
+}
+loadWeather();
+
+/* ══════════════════════════════════════════════════════════
+   HUB — APP LAUNCHER
+══════════════════════════════════════════════════════════ */
+const DEF_APPS=[
+  {icon:'🌐',name:'GOOGLE',url:'https://google.com'},
+  {icon:'📧',name:'GMAIL',url:'https://mail.google.com'},
+  {icon:'📅',name:'CALENDAR',url:'https://calendar.google.com'},
+  {icon:'🎵',name:'SPOTIFY',url:'https://open.spotify.com'},
+  {icon:'💬',name:'SLACK',url:'https://slack.com'},
+  {icon:'🐙',name:'GITHUB',url:'https://github.com'},
+  {icon:'📝',name:'NOTION',url:'https://notion.so'},
+  {icon:'🤖',name:'CLAUDE',url:'https://claude.ai'},
+  {icon:'▶️',name:'YOUTUBE',url:'https://youtube.com'},
+  {icon:'🐦',name:'X',url:'https://x.com'},
+  {icon:'💼',name:'LINKEDIN',url:'https://linkedin.com'},
+  {icon:'📰',name:'HACKERNEWS',url:'https://news.ycombinator.com'},
+  {icon:'🗺️',name:'MAPS',url:'https://maps.google.com'},
+  {icon:'☁️',name:'DRIVE',url:'https://drive.google.com'},
+  {icon:'📊',name:'SHEETS',url:'https://docs.google.com/spreadsheets'},
+  {icon:'🎮',name:'STEAM',url:'https://store.steampowered.com'},
+  {icon:'💰',name:'COINBASE',url:'https://coinbase.com'},
+  {icon:'🎬',name:'NETFLIX',url:'https://netflix.com'},
+  {icon:'📡',name:'REDDIT',url:'https://reddit.com'},
+  {icon:'📺',name:'TWITCH',url:'https://twitch.tv'},
+];
+let apps=JSON.parse(localStorage.getItem('mrd-apps')||'null')||DEF_APPS;
+let editIdx=null;
+function saveApps(){ localStorage.setItem('mrd-apps',JSON.stringify(apps)); }
+function renderApps(){
+  const g=$('agrid'); g.innerHTML='';
+  apps.forEach((a,i)=>{
+    const el=document.createElement('div');
+    el.className='app-item';
+    el.innerHTML=`<div class="ai">${a.icon}</div><div class="an">${a.name}</div>`;
+    let pt=null;
+    const open=()=>window.open(a.url,'_blank');
+    const edit=()=>openModal(i);
+    el.addEventListener('mousedown',()=>{ pt=setTimeout(()=>{pt=null;edit();},650); });
+    el.addEventListener('mouseup',()=>{ if(pt){clearTimeout(pt);pt=null;open();} });
+    el.addEventListener('mouseleave',()=>{ if(pt){clearTimeout(pt);pt=null;} });
+    el.addEventListener('touchstart',e=>{e.preventDefault();pt=setTimeout(()=>{pt=null;edit();},650);},{passive:false});
+    el.addEventListener('touchend',e=>{e.preventDefault();if(pt){clearTimeout(pt);pt=null;open();}});
+    g.appendChild(el);
+  });
+  const add=document.createElement('div');
+  add.className='app-item app-add';
+  add.innerHTML='<div class="ai">＋</div><div class="an">ADD</div>';
+  add.addEventListener('click',()=>openModal(-1));
+  g.appendChild(add);
+}
+function openModal(idx){
+  editIdx=idx; const isEdit=idx>=0;
+  $('mtitle').textContent=isEdit?'EDIT APP':'ADD APP';
+  $('micon').value=isEdit?apps[idx].icon:'🔗';
+  $('mname').value=isEdit?apps[idx].name:'';
+  $('murl').value=isEdit?apps[idx].url:'https://';
+  $('mdel').style.display=isEdit?'block':'none';
+  $('modal').classList.add('open'); $('mname').focus();
+}
+$('mcancel').addEventListener('click',()=>$('modal').classList.remove('open'));
+$('msave').addEventListener('click',()=>{
+  const icon=$('micon').value.trim()||'🔗';
+  const name=($('mname').value.trim()||'APP').toUpperCase();
+  const url=$('murl').value.trim()||'https://';
+  if(editIdx>=0) apps[editIdx]={icon,name,url};
+  else apps.push({icon,name,url});
+  saveApps(); renderApps(); $('modal').classList.remove('open');
+});
+$('mdel').addEventListener('click',()=>{
+  if(editIdx>=0 && confirm('Delete this app?')){
+    apps.splice(editIdx,1); saveApps(); renderApps(); $('modal').classList.remove('open');
+  }
+});
+$('modal').addEventListener('click',e=>{ if(e.target===$('modal'))$('modal').classList.remove('open'); });
+renderApps();
+
+/* ── HUB TABS ── */
+document.querySelectorAll('.hub-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.hub-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.hub-view').forEach(v=>v.classList.remove('active'));
+    tab.classList.add('active');
+    $('v'+tab.dataset.tab).classList.add('active');
+    if(tab.dataset.tab==='s') setTimeout(()=>$('sin').focus(),50);
+    if(tab.dataset.tab==='n') setTimeout(()=>$('narea').focus(),50);
+  });
+});
+
+/* ── NOTES ── */
+const na=$('narea');
+na.value=localStorage.getItem('mrd-notes')||'';
+function ncnt(){
+  const v=na.value;
+  const c=v.length, w=v.trim()?v.trim().split(/\s+/).length:0;
+  $('ncnt').textContent=`${c} CHARS · ${w} WORDS`;
+}
+na.addEventListener('input',()=>{ localStorage.setItem('mrd-notes',na.value); ncnt(); });
+$('nclr').addEventListener('click',()=>{
+  if(confirm('Clear all notes?')){ na.value=''; localStorage.removeItem('mrd-notes'); ncnt(); }
+});
+ncnt();
+
+/* ── SEARCH ── */
+const go=url=>window.open(url,'_blank');
+function execSearch(){
+  const q=$('sin').value.trim();
+  if(!q)return;
+  go(q.startsWith('http')?q:`https://www.google.com/search?q=${encodeURIComponent(q)}`);
+}
+$('sbtn').addEventListener('click',execSearch);
+$('sin').addEventListener('keydown',e=>{ if(e.key==='Enter')execSearch(); });
+
+/* ══════════════════════════════════════════════════════════
+   TASKS PANEL
+══════════════════════════════════════════════════════════ */
+const PCOLS=['rgba(255,255,255,0.18)','#FFB020','#FF4B6E'];
+let tasks=JSON.parse(localStorage.getItem('mrd-tasks')||'[]');
+function saveTasks(){ localStorage.setItem('mrd-tasks',JSON.stringify(tasks)); }
+function renderTasks(){
+  const list=$('tlist'); list.innerHTML='';
+  const active=tasks.filter(t=>!t.done), done=tasks.filter(t=>t.done);
+  [...active,...done].forEach(task=>{
+    const ri=tasks.indexOf(task);
+    const el=document.createElement('div');
+    el.className='task-item'+(task.done?' done':'');
+    el.innerHTML=`
+      <div class="task-chk">${task.done?'✓':''}</div>
+      <div class="task-txt">${task.text}</div>
+      <div class="task-pri" style="background:${PCOLS[task.p||0]}" title="Priority: click to cycle"></div>
+      <button class="task-del">✕</button>`;
+    el.querySelector('.task-chk').addEventListener('click',e=>{
+      e.stopPropagation(); tasks[ri].done=!tasks[ri].done; saveTasks(); renderTasks();
+    });
+    el.querySelector('.task-pri').addEventListener('click',e=>{
+      e.stopPropagation(); tasks[ri].p=((tasks[ri].p||0)+1)%3; saveTasks(); renderTasks();
+    });
+    el.querySelector('.task-del').addEventListener('click',e=>{
+      e.stopPropagation(); tasks.splice(ri,1); saveTasks(); renderTasks();
+    });
+    list.appendChild(el);
+  });
+  const ac=active.length, dc=done.length;
+  $('tcnt').textContent=`${ac} ACTIVE`;
+  $('tstats').textContent=ac===0?'ALL CLEAR':`${ac} PENDING`;
+  $('tcmpl').textContent=dc>0?`${dc} DONE`:'';
+}
+function addTask(){
+  const inp=$('tin'), t=inp.value.trim().toUpperCase();
+  if(!t)return;
+  tasks.unshift({text:t,done:false,p:0,id:Date.now()});
+  saveTasks(); renderTasks(); inp.value='';
+}
+$('tadd').addEventListener('click',addTask);
+$('tin').addEventListener('keydown',e=>{ if(e.key==='Enter')addTask(); });
+renderTasks();
+
+/* ══════════════════════════════════════════════════════════
+   MEDIA / SIGNAL PANEL — audio-reactive visualizer
+══════════════════════════════════════════════════════════ */
+(function(){
+  const cvs=$('mc'), ctx=cvs.getContext('2d');
+  let audioCtx=null, analyser=null, dataArr=null;
+  let active=false, ph=0;
+
+  function resize(){ cvs.width=cvs.offsetWidth*devicePixelRatio; cvs.height=cvs.offsetHeight*devicePixelRatio; }
+  resize(); window.addEventListener('resize',resize);
+
+  // VU bars
+  const vw=$('vuwrap'), NUM=36, vuEls=[];
+  for(let i=0;i<NUM;i++){
+    const b=document.createElement('div'); b.className='vu-b';
+    const hue=180-i*2;
+    b.style.background=`hsl(${hue},75%,${45+i}%)`;
+    vw.appendChild(b); vuEls.push(b);
+  }
+
+  async function initAudio(){
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+      audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+      analyser=audioCtx.createAnalyser();
+      analyser.fftSize=256;
+      dataArr=new Uint8Array(analyser.frequencyBinCount);
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
+      active=true; $('mstatus').textContent='MIC: ACTIVE — VISUALIZING AMBIENT AUDIO';
+    } catch(e){ $('mstatus').textContent='MIC: UNAVAILABLE — AMBIENT MODE'; }
+  }
+
+  $('mplay').addEventListener('click',()=>{
+    if(!active) initAudio();
+    // Also try system media key
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaPlayPause',keyCode:179,bubbles:true}));
+  });
+  $('mprev').addEventListener('click',()=>
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaTrackPrevious',keyCode:177,bubbles:true})));
+  $('mnext').addEventListener('click',()=>
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaTrackNext',keyCode:176,bubbles:true})));
+
+  function draw(){
+    const W=cvs.width, H=cvs.height;
+    ctx.clearRect(0,0,W,H);
+    if(active && analyser){ analyser.getByteFrequencyData(dataArr); }
+    ph+=0.028;
+    // Waveform 1
+    ctx.beginPath(); ctx.strokeStyle='rgba(0,210,185,0.65)'; ctx.lineWidth=1.6*devicePixelRatio;
+    for(let i=0;i<80;i++){
+      const x=(i/80)*W;
+      let y;
+      if(active && dataArr){ const di=Math.floor(i/80*dataArr.length); y=H/2-(dataArr[di]/255)*H*0.42; }
+      else { y=H/2+Math.sin(i*0.14+ph)*H*0.28*(0.5+Math.sin(i*0.06+ph*0.7)*0.5); }
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // Waveform 2
+    ctx.beginPath(); ctx.strokeStyle='rgba(123,111,232,0.4)'; ctx.lineWidth=1*devicePixelRatio;
+    for(let i=0;i<80;i++){
+      const x=(i/80)*W;
+      let y;
+      if(active && dataArr){ const di=Math.floor(i/80*dataArr.length*0.55); y=H/2+(dataArr[di]/255)*H*0.3; }
+      else { y=H/2-Math.sin(i*0.11-ph*1.4)*H*0.16; }
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // VU
+    vuEls.forEach((b,i)=>{
+      let h;
+      if(active && dataArr){ const di=Math.floor(i/NUM*dataArr.length*0.65); h=dataArr[di]/255*100; }
+      else { h=(Math.sin(i*0.38+ph*2.2)+1)*22+4+Math.random()*6; }
+      b.style.height=clamp(h,4,100)+'%';
+    });
+    // Media session
+    if('mediaSession' in navigator && navigator.mediaSession.metadata){
+      const meta=navigator.mediaSession.metadata;
+      $('mtrack').textContent=meta.title||'UNKNOWN TRACK';
+      $('martist').textContent=meta.artist||'UNKNOWN ARTIST';
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════════════════════
+   SYSTEM TELEMETRY
+══════════════════════════════════════════════════════════ */
+async function initSys(){
+  let bat=null;
+  try{ bat=await navigator.getBattery(); } catch(e){}
+  const hw={
+    cores:navigator.hardwareConcurrency||'N/A',
+    mem:navigator.deviceMemory?(navigator.deviceMemory+' GB'):'N/A',
+    conn:navigator.connection||navigator.mozConnection||navigator.webkitConnection||null,
+    scr:`${screen.width}×${screen.height}`,
+    cd:screen.colorDepth+'-BIT',
+    plat:navigator.platform||'UNKNOWN',
+  };
+  function update(){
+    const up=performance.now()/1000;
+    const uh=Math.floor(up/3600), um=Math.floor((up%3600)/60), us=Math.floor(up%60);
+    const upstr=uh>0?`${uh}H ${um}M ${us}S`:`${um}M ${us}S`;
+    const bpct=bat?Math.round(bat.level*100):100;
+    const bchg=bat?bat.charging:false;
+    const bcolor=bpct>65?'var(--accent)':bpct>25?'var(--a3)':'var(--a2)';
+    const net=hw.conn?(hw.conn.effectiveType||hw.conn.type||'CONNECTED').toUpperCase():
+      (navigator.onLine?'ONLINE':'OFFLINE');
+    let mu='--',mt='--';
+    if(performance.memory){
+      mu=(performance.memory.usedJSHeapSize/1048576).toFixed(0)+' MB';
+      mt=(performance.memory.jsHeapSizeLimit/1048576).toFixed(0)+' MB';
+    }
+    $('sysbody').innerHTML=`
+      <div class="sys-row">
+        <div class="sys-lbl">BATTERY<span>${bpct}% ${bchg?'⚡':''}</span></div>
+        <div class="sys-trk"><div class="sys-fill" style="width:${bpct}%;background:${bcolor}"></div></div>
+      </div>
+      <hr class="sys-hr">
+      <div class="sys-rd"><span>NETWORK</span>${net}</div>
+      <div class="sys-rd"><span>CPU CORES</span>${hw.cores}</div>
+      <div class="sys-rd"><span>DEVICE RAM</span>${hw.mem}</div>
+      <hr class="sys-hr">
+      <div class="sys-rd"><span>JS HEAP</span>${mu} / ${mt}</div>
+      <div class="sys-rd"><span>RESOLUTION</span>${hw.scr}</div>
+      <div class="sys-rd"><span>COLOR DEPTH</span>${hw.cd}</div>
+      <div class="sys-rd"><span>PLATFORM</span>${hw.plat.toUpperCase().substring(0,12)}</div>
+      <hr class="sys-hr">
+      <div class="sys-rd"><span>UPTIME</span>${upstr}</div>
+      <div class="sys-rd"><span>TZ OFFSET</span>UTC${-new Date().getTimezoneOffset()/60 >= 0?'+':'-'}${Math.abs(new Date().getTimezoneOffset()/60)}</div>
+      <div class="sys-rd"><span>LOCALE</span>${navigator.language||'en-US'}</div>
+      <hr class="sys-hr">
+      <div class="sys-rd"><span>STATUS</span><span style="color:var(--accent)">NOMINAL</span></div>
+      <div class="sys-rd"><span>BUILD</span>MERIDIAN 1.0</div>
+    `;
+  }
+  setInterval(update,2500); update();
+}
+initSys();
+
+/* ══════════════════════════════════════════════════════════
+   THEME SWITCHER
+══════════════════════════════════════════════════════════ */
+const THEMES={
+  teal:  {accent:'#00D2B9',glow:'rgba(0,210,185,0.28)',a2:'#FF4B6E',a3:'#FFB020',a4:'#7B6FE8'},
+  amber: {accent:'#FFB020',glow:'rgba(255,176,32,0.28)',a2:'#FF4B6E',a3:'#00D2B9',a4:'#7B6FE8'},
+  violet:{accent:'#9B8FFF',glow:'rgba(155,143,255,0.28)',a2:'#FF4B6E',a3:'#FFB020',a4:'#00D2B9'},
+  rose:  {accent:'#FF6B8A',glow:'rgba(255,107,138,0.28)',a2:'#FF4B6E',a3:'#FFB020',a4:'#7B6FE8'},
+};
+document.querySelectorAll('.thm-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.thm-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const t=THEMES[btn.dataset.theme];
+    if(!t)return;
+    const r=document.documentElement.style;
+    r.setProperty('--accent',t.accent);
+    r.setProperty('--accent-glow',t.glow);
+    r.setProperty('--a2',t.a2);
+    r.setProperty('--a3',t.a3);
+    r.setProperty('--a4',t.a4);
+    r.setProperty('--border','rgba('+hexToRgb(t.accent)+',0.22)');
+    r.setProperty('--border-hi','rgba('+hexToRgb(t.accent)+',0.65)');
+  });
+});
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') $('modal').classList.remove('open');
+  if(e.altKey){
+    if(e.key==='1'){ document.querySelector('.hub-tab[data-tab="l"]').click(); e.preventDefault(); }
+    if(e.key==='2'){ document.querySelector('.hub-tab[data-tab="n"]').click(); e.preventDefault(); }
+    if(e.key==='3'){ document.querySelector('.hub-tab[data-tab="s"]').click(); e.preventDefault(); }
+    if(e.key==='r'){ loadWeather(); e.preventDefault(); }
+  }
+});
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════ */
+window.addEventListener('load', runBoot);
+</script>
+</body>
+</html>

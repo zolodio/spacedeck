@@ -49,9 +49,7 @@
       position: relative; z-index: 1;
       display: flex; align-items: stretch;
       width: 100vw; height: 100vh;
-      padding: 1.5vh 1vw; gap: 0.8vw;
-      flex-wrap: wrap;
-      align-content: flex-start;
+      padding: 1.3vh 0.8vw; gap: 0.55vw;
     }
 
     /* ── PANELS ── */
@@ -65,51 +63,11 @@
       flex-direction: column;
       opacity: 0;
       transform: translateY(12px);
-      transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.25s, box-shadow 0.3s ease;
+      transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.25s;
       backdrop-filter: blur(14px);
-      user-select: none;
-      cursor: grab;
     }
     .panel.on { opacity: 1; transform: translateY(0); }
     .panel:hover { border-color: rgba(0,210,185,0.45); }
-    .panel.dragging {
-      cursor: grabbing;
-      box-shadow: 0 0 40px var(--accent-glow), 0 0 80px var(--accent-glow);
-      opacity: 0.95;
-      z-index: 1000;
-    }
-    .panel.fullscreen-mode {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      border-radius: 0 !important;
-      z-index: 999 !important;
-      animation: trekkieExpand 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .panel.compact-fullscreen {
-      animation: trekkieMinimize 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes trekkieExpand {
-      0% {
-        border-radius: inherit;
-        box-shadow: 0 0 20px var(--accent-glow);
-      }
-      50% {
-        box-shadow: 0 0 80px var(--accent-glow), 0 0 160px rgba(0, 210, 185, 0.4);
-      }
-      100% {
-        border-radius: 0;
-        box-shadow: 0 0 40px var(--accent-glow);
-      }
-    }
-    @keyframes trekkieMinimize {
-      0% { transform: scale(1) !important; opacity: 1 !important; }
-      50% { box-shadow: 0 0 60px var(--accent-glow), inset 0 0 40px rgba(0, 210, 185, 0.1); }
-      100% { transform: scale(1) !important; opacity: 0.7 !important; }
-    }
 
     /* Corner accents */
     .panel::before, .panel::after {
@@ -128,18 +86,15 @@
     .ph {
       display: flex; align-items: center;
       justify-content: space-between;
-      padding: 1vh 1.3vh;
+      padding: 0.65vh 1.1vh;
       border-bottom: 1px solid var(--border);
-      font-family: var(--orb); font-size: 0.85vh;
+      font-family: var(--orb); font-size: 0.62vh;
       letter-spacing: 0.32em; color: var(--accent);
       flex-shrink: 0;
-      cursor: grab;
-      touch-action: none;
     }
-    .ph:active { cursor: grabbing; }
     .ph .ind {
       display: flex; align-items: center;
-      gap: 0.5vw; font-size: 0.75vh; color: var(--dim);
+      gap: 0.5vw; font-size: 0.58vh; color: var(--dim);
       font-family: var(--mono);
     }
     .dot {
@@ -152,37 +107,14 @@
       50%{opacity:0.35;transform:scale(0.65)}
     }
     .pb { flex: 1; overflow: hidden; position: relative; }
-    .panel-fs-btn {
-      width: 1.8rem; height: 1.8rem;
-      background: rgba(0, 210, 185, 0.1);
-      border: 1px solid var(--accent);
-      border-radius: 2px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-      color: var(--accent);
-      transition: all 0.3s ease;
-      flex-shrink: 0;
-      margin-left: 0.8vw;
-      opacity: 0;
-      transform: scale(0.8);
-    }
-    .panel:hover .panel-fs-btn {
-      opacity: 1;
-      transform: scale(1);
-    }
-    .panel-fs-btn:hover {
-      background: rgba(0, 210, 185, 0.25);
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
 
-    /* Panel widths - responsive */
-    #p-clock   { width: 13vw; flex-shrink: 0; min-width: 160px; }
-    #p-weather { width: 16vw; flex-shrink: 0; min-width: 180px; }
-    #p-hub     { flex: 1; min-width: 300px; }
-    #p-tasks   { width: 16vw; flex-shrink: 0; min-width: 180px; }
-    #p-media   { width: 12vw; flex-shrink: 0; min-width: 140px; }
-    #p-sys     { width: 13vw; flex-shrink: 0; min-width: 160px; }
+    /* Panel widths */
+    #p-clock   { width: 12.2vw; flex-shrink: 0; }
+    #p-weather { width: 14.2vw; flex-shrink: 0; }
+    #p-hub     { flex: 1; min-width: 0; }
+    #p-tasks   { width: 14.2vw; flex-shrink: 0; }
+    #p-media   { width: 10.8vw; flex-shrink: 0; }
+    #p-sys     { width: 12.2vw; flex-shrink: 0; }
 
     /* ══════════════════════════════
        CLOCK PANEL
@@ -190,32 +122,32 @@
     .clock-body {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      height: 100%; gap: 1.2vh; padding: 1.5vh;
+      height: 100%; gap: 0.7vh; padding: 1vh;
     }
     .t-hhmm {
       font-family: var(--orb); font-weight: 900;
-      font-size: clamp(3rem, 8vh, 10rem); letter-spacing: 0.04em;
+      font-size: 6.2vh; letter-spacing: 0.04em;
       color: #fff; line-height: 1;
       text-shadow: 0 0 28px var(--accent), 0 0 55px var(--accent-glow);
     }
     .t-ss {
-      font-family: var(--orb); font-size: clamp(1.2rem, 3vh, 3.5rem);
+      font-family: var(--orb); font-size: 2.2vh;
       color: var(--accent); letter-spacing: 0.2em;
     }
-    .analog-svg { width: clamp(6rem, 11vh, 14rem); height: clamp(6rem, 11vh, 14rem); flex-shrink: 0; }
+    .analog-svg { width: 8.5vh; height: 8.5vh; flex-shrink: 0; }
     .t-date {
-      font-size: clamp(0.7rem, 0.95vh, 1.2rem); letter-spacing: 0.22em;
+      font-size: 0.68vh; letter-spacing: 0.22em;
       color: var(--dim); text-align: center; line-height: 1.8;
     }
     .day-prog {
-      width: 88%; display: flex; flex-direction: column; gap: 0.5vh;
+      width: 88%; display: flex; flex-direction: column; gap: 0.35vh;
     }
     .day-prog-lbl {
       display: flex; justify-content: space-between;
-      font-size: clamp(0.6rem, 0.85vh, 1rem); color: var(--dim); letter-spacing: 0.18em;
+      font-size: 0.62vh; color: var(--dim); letter-spacing: 0.18em;
     }
     .day-prog-track {
-      height: 3px; background: rgba(255,255,255,0.08);
+      height: 2px; background: rgba(255,255,255,0.08);
       border-radius: 2px; overflow: hidden;
     }
     .day-prog-fill {
@@ -228,49 +160,49 @@
     ══════════════════════════════ */
     .wx-body {
       display: flex; flex-direction: column;
-      height: 100%; padding: 1.3vh 1.6vh; gap: 1vh;
+      height: 100%; padding: 1.1vh 1.3vh; gap: 0.7vh;
     }
     .wx-loc {
-      font-size: clamp(0.75rem, 0.95vh, 1.1rem); color: var(--dim);
+      font-size: 0.72vh; color: var(--dim);
       letter-spacing: 0.2em;
       display: flex; align-items: center; gap: 0.5vw;
     }
     .wx-loc::before { content: '⊕'; color: var(--accent); }
     .wx-main {
-      display: flex; align-items: flex-end; gap: 1vh;
+      display: flex; align-items: flex-end; gap: 0.8vh;
     }
     .wx-temp {
       font-family: var(--orb); font-weight: 900;
-      font-size: clamp(3rem, 8vh, 10rem); color: #fff; line-height: 1;
+      font-size: 6.5vh; color: #fff; line-height: 1;
     }
     .wx-unit {
-      font-family: var(--orb); font-size: clamp(1.2rem, 2.5vh, 3rem);
-      color: var(--dim); padding-bottom: 0.8vh;
+      font-family: var(--orb); font-size: 2.2vh;
+      color: var(--dim); padding-bottom: 0.5vh;
     }
-    .wx-emoji { font-size: clamp(3rem, 5.5vh, 7rem); line-height: 1; }
+    .wx-emoji { font-size: 4.5vh; line-height: 1; }
     .wx-cond {
-      font-size: clamp(0.8rem, 1.1vh, 1.3rem); letter-spacing: 0.25em; color: var(--accent);
+      font-size: 0.82vh; letter-spacing: 0.25em; color: var(--accent);
     }
     .wx-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0.6vh;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.45vh;
     }
     .wx-stat {
-      font-size: clamp(0.7rem, 0.9vh, 1rem); color: var(--dim);
+      font-size: 0.68vh; color: var(--dim);
     }
     .wx-stat b { color: var(--text); font-weight: 700; font-style: normal; }
     .wx-fc {
       display: flex; gap: 0.4vw;
       border-top: 1px solid var(--border);
-      padding-top: 0.8vh; margin-top: auto;
+      padding-top: 0.7vh; margin-top: auto;
     }
     .fc-day {
       flex: 1; display: flex; flex-direction: column;
-      align-items: center; gap: 0.4vh;
-      font-size: clamp(0.65rem, 0.85vh, 1rem); color: var(--dim);
+      align-items: center; gap: 0.25vh;
+      font-size: 0.62vh; color: var(--dim);
     }
     .fc-day .fc-dn { letter-spacing: 0.15em; color: var(--accent); }
-    .fc-day .fc-ic { font-size: clamp(1.2rem, 2vh, 2.5rem); }
-    .fc-day .fc-temps { display: flex; gap: 0.3vw; font-size: clamp(0.6rem, 0.8vh, 0.95rem); }
+    .fc-day .fc-ic { font-size: 1.4vh; }
+    .fc-day .fc-temps { display: flex; gap: 0.3vw; }
     .fc-day .fc-hi { color: var(--text); }
 
     /* ══════════════════════════════
@@ -281,600 +213,960 @@
       flex-shrink: 0;
     }
     .hub-tab {
-      flex: 1; padding: 1rem;
-      background: transparent;
-      border: none; color: var(--dim);
-      font-family: var(--orb);
-      font-size: clamp(0.85rem, 1.1vh, 1.3rem);
-      letter-spacing: 0.2em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-bottom: 2px solid transparent;
+      padding: 0.7vh 1.4vh;
+      font-family: var(--orb); font-size: 0.6vh;
+      letter-spacing: 0.3em; color: var(--dim);
+      cursor: pointer; transition: all 0.18s;
+      border-right: 1px solid var(--border);
+      position: relative;
     }
     .hub-tab:hover { color: var(--accent); }
     .hub-tab.active {
       color: var(--accent);
-      border-bottom-color: var(--accent);
+      background: rgba(0,210,185,0.07);
     }
-    .hub-body { flex: 1; overflow: auto; padding: 1.2vh; }
+    .hub-tab.active::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1.5px; background: var(--accent);
+    }
+    .hub-view { display: none; height: 100%; }
+    .hub-view.active { display: flex; }
+
+    /* LAUNCH */
+    #vl { flex-direction: column; padding: 0.9vh; overflow-y: auto; }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(5.8vh, 1fr));
+      gap: 0.6vh; align-content: start;
+    }
+    .app-item {
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.28vh;
+      background: rgba(0,210,185,0.04);
+      border: 1px solid var(--border);
+      border-radius: 3px; cursor: pointer;
+      transition: all 0.14s; padding: 0.35vh;
+      text-align: center; overflow: hidden;
+    }
+    .app-item:hover {
+      background: rgba(0,210,185,0.11);
+      border-color: var(--accent);
+      transform: scale(1.06);
+    }
+    .app-item:active { transform: scale(0.96); }
+    .ai { font-size: 2.4vh; line-height: 1; }
+    .an {
+      font-size: 0.5vh; letter-spacing: 0.1em;
+      word-break: break-word; color: var(--dim);
+      line-height: 1.2;
+    }
+    .app-item:hover .an { color: var(--text); }
+    .app-add { border-style: dashed; opacity: 0.55; }
+    .app-add:hover { opacity: 1; }
+
+    /* NOTES */
+    #vn { flex-direction: column; padding: 0.9vh; gap: 0.6vh; }
+    .notes-area {
+      flex: 1; background: transparent; border: none;
+      outline: none; color: var(--text);
+      font-family: var(--mono); font-size: 1.1vh;
+      line-height: 1.85; resize: none; padding: 0.4vh;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+      caret-color: var(--accent);
+    }
+    .notes-footer {
+      display: flex; justify-content: space-between;
+      align-items: center; border-top: 1px solid var(--border);
+      padding-top: 0.4vh; font-size: 0.6vh; color: var(--dim);
+    }
+    .btn-sm {
+      background: none; border: 1px solid currentColor;
+      font-family: var(--mono); font-size: 0.6vh;
+      padding: 0.3vh 0.8vh; cursor: pointer;
+      letter-spacing: 0.18em; transition: all 0.15s;
+    }
+    .btn-danger { color: var(--a2); }
+    .btn-danger:hover { background: var(--a2); color: var(--bg); }
+
+    /* SEARCH */
+    #vs {
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5vh; gap: 1.4vh;
+    }
+    .srch-title {
+      font-family: var(--orb); font-size: 1.4vh;
+      color: var(--accent); letter-spacing: 0.45em;
+    }
+    .srch-wrap {
+      width: 100%; display: flex; gap: 0.8vh; max-width: 60vh;
+    }
+    .srch-in {
+      flex: 1; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--mono);
+      font-size: 1.2vh; padding: 0.9vh 1.3vh;
+      outline: none; caret-color: var(--accent);
+      transition: border-color 0.18s;
+    }
+    .srch-in:focus { border-color: var(--accent); }
+    .srch-btn {
+      background: var(--accent); border: none;
+      color: var(--bg); font-family: var(--orb);
+      font-size: 0.65vh; letter-spacing: 0.3em;
+      padding: 0.9vh 1.4vh; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .srch-btn:hover { opacity: 0.8; }
+    .srch-quick {
+      display: flex; flex-wrap: wrap; gap: 0.65vh;
+      justify-content: center;
+    }
+    .qbtn {
+      background: rgba(0,210,185,0.05);
+      border: 1px solid var(--border);
+      color: var(--dim); font-family: var(--mono);
+      font-size: 0.68vh; padding: 0.38vh 0.9vh;
+      cursor: pointer; letter-spacing: 0.15em;
+      transition: all 0.14s;
+    }
+    .qbtn:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ══════════════════════════════
        TASKS PANEL
     ══════════════════════════════ */
-    .task-header { padding: 0.8vh 1.1vh; border-bottom: 1px solid var(--border); }
-    .task-cnt { font-size: clamp(0.85rem, 1.1vh, 1.3rem); color: var(--accent); font-weight: 700; }
-    .task-stat { font-size: clamp(0.75rem, 0.95vh, 1.1rem); color: var(--dim); margin-top: 0.3vh; }
-    .task-cmpl { font-size: clamp(0.7rem, 0.85vh, 1rem); color: var(--a3); margin-top: 0.2vh; }
-    .task-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.4vh; padding: 0.8vh; }
-    .task-item {
-      padding: 0.9vh 0.8vh;
-      background: rgba(0, 210, 185, 0.06);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      gap: 0.6vw;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: clamp(0.75rem, 0.95vh, 1.1rem);
+    .tasks-body {
+      display: flex; flex-direction: column;
+      height: 100%; padding: 0.9vh; gap: 0.65vh;
     }
-    .task-item:hover { background: rgba(0, 210, 185, 0.12); border-color: var(--border-hi); }
-    .task-item.done {
-      opacity: 0.5;
-      text-decoration: line-through;
+    .task-add {
+      display: flex; gap: 0.45vh; flex-shrink: 0;
+    }
+    .task-in {
+      flex: 1; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--mono);
+      font-size: 0.78vh; padding: 0.48vh 0.75vh;
+      outline: none; caret-color: var(--accent);
+    }
+    .task-in:focus { border-color: var(--accent); }
+    .task-add-btn {
+      background: var(--accent); border: none;
+      color: var(--bg); font-family: var(--orb);
+      font-size: 0.8vh; width: 3vh; cursor: pointer;
+      border-radius: 2px; transition: opacity 0.15s;
+    }
+    .task-add-btn:hover { opacity: 0.8; }
+    .task-list {
+      flex: 1; overflow-y: auto; display: flex;
+      flex-direction: column; gap: 0.38vh;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    .task-item {
+      display: flex; align-items: center; gap: 0.55vh;
+      padding: 0.45vh 0.55vh;
+      background: rgba(255,255,255,0.018);
+      border: 1px solid transparent;
+      border-radius: 2px; cursor: pointer;
+      transition: all 0.14s;
+    }
+    .task-item:hover {
+      border-color: var(--border);
+      background: rgba(0,210,185,0.038);
     }
     .task-chk {
-      width: 18px; height: 18px;
-      border: 1.5px solid var(--accent);
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 1.35vh; height: 1.35vh; flex-shrink: 0;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 0.75vh; transition: all 0.18s;
+    }
+    .task-item.done .task-chk {
+      background: var(--accent); border-color: var(--accent);
+      color: var(--bg);
+    }
+    .task-txt { flex: 1; font-size: 0.82vh; line-height: 1.3; transition: all 0.18s; }
+    .task-item.done .task-txt { text-decoration: line-through; color: var(--dim); }
+    .task-pri {
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0; cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .task-pri:hover { transform: scale(1.5); }
+    .task-del {
+      opacity: 0; background: none; border: none;
+      color: var(--a2); font-size: 0.85vh;
+      cursor: pointer; transition: opacity 0.14s;
       flex-shrink: 0;
-      font-size: 0.9rem;
-      color: var(--accent);
     }
-    .task-txt { flex: 1; }
-    .task-pri, .task-del {
-      width: 1.6rem; height: 1.6rem;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--dim);
-      border-radius: 2px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      font-size: 0.85rem;
-      flex-shrink: 0;
-    }
-    .task-pri:hover, .task-del:hover { color: var(--accent); border-color: var(--accent); }
-    .task-input {
-      width: 100%;
-      padding: 0.7vh 0.8vh;
-      background: rgba(0, 210, 185, 0.06);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: clamp(0.75rem, 0.95vh, 1.1rem);
-      margin-bottom: 0.6vh;
-      transition: border 0.2s ease;
-    }
-    .task-input:focus {
-      outline: none;
-      border-color: var(--border-hi);
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-    .task-btn {
-      width: 100%;
-      padding: 0.8vh;
-      background: rgba(0, 210, 185, 0.15);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      border-radius: 2px;
-      font-family: var(--orb);
-      font-size: clamp(0.8rem, 1vh, 1.2rem);
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 700;
-    }
-    .task-btn:hover {
-      background: rgba(0, 210, 185, 0.25);
-      box-shadow: 0 0 16px var(--accent-glow);
+    .task-item:hover .task-del { opacity: 1; }
+    .task-footer {
+      font-size: 0.62vh; color: var(--dim);
+      letter-spacing: 0.15em;
+      padding-top: 0.45vh; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between;
     }
 
     /* ══════════════════════════════
-       MEDIA PANEL
+       MEDIA / SIGNAL PANEL
     ══════════════════════════════ */
-    .med-body { display: flex; flex-direction: column; height: 100%; padding: 1vh; gap: 0.8vh; }
-    .med-canvas { flex: 1; border: 1px solid var(--border); border-radius: 2px; background: rgba(0,0,0,0.3); }
-    .med-vu { display: flex; gap: 0.2vh; height: 1.6rem; align-items: flex-end; }
-    .vu-b { flex: 1; border-radius: 1px; background: var(--accent); transition: height 0.05s ease; }
-    .med-info {
-      font-size: clamp(0.7rem, 0.9vh, 1rem);
-      color: var(--dim);
+    .media-body {
+      display: flex; flex-direction: column;
+      height: 100%; align-items: center;
+      padding: 0.8vh; gap: 0.6vh;
     }
-    .med-info strong { color: var(--text); }
-    .med-btns { display: flex; gap: 0.5vh; }
-    .med-btn {
-      flex: 1;
-      padding: 0.7vh;
-      background: rgba(0, 210, 185, 0.12);
-      border: 1px solid var(--border);
-      color: var(--accent);
-      border-radius: 2px;
-      font-family: var(--orb);
-      font-size: clamp(0.75rem, 0.9vh, 1.05rem);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 600;
+    #mc { width: 100%; flex-shrink: 0; }
+    .media-info {
+      text-align: center; flex: 1;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 0.35vh;
     }
-    .med-btn:hover { background: rgba(0, 210, 185, 0.25); border-color: var(--accent); }
+    .m-track {
+      font-size: 0.8vh; color: var(--text);
+      letter-spacing: 0.15em; line-height: 1.4;
+    }
+    .m-artist {
+      font-size: 0.65vh; color: var(--dim); letter-spacing: 0.2em;
+    }
+    .vu-wrap {
+      display: flex; align-items: flex-end; gap: 1px;
+      height: 1.8vh; width: 100%;
+    }
+    .vu-b {
+      flex: 1; min-height: 2px; border-radius: 1px;
+      transition: height 0.07s ease-out;
+    }
+    .m-ctrls {
+      display: flex; align-items: center; gap: 1.1vh;
+    }
+    .m-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text); width: 3.2vh; height: 3.2vh;
+      border-radius: 2px; cursor: pointer;
+      font-size: 1.1vh; transition: all 0.14s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .m-btn.play {
+      width: 4.2vh; height: 4.2vh;
+      border-color: var(--accent); color: var(--accent);
+      font-size: 1.4vh;
+    }
+    .m-status {
+      font-size: 0.58vh; letter-spacing: 0.2em; color: var(--dim);
+    }
 
     /* ══════════════════════════════
-       SYSTEM PANEL
+       SYSTEM TELEMETRY
     ══════════════════════════════ */
-    .sys-body { height: 100%; overflow-y: auto; padding: 1vh; font-size: clamp(0.75rem, 0.95vh, 1.1rem); }
+    .sys-body {
+      display: flex; flex-direction: column;
+      height: 100%; padding: 0.9vh 1.1vh;
+      gap: 0.7vh; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
     .sys-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5vh;
-      margin-bottom: 1vh;
+      display: flex; flex-direction: column; gap: 0.28vh;
     }
     .sys-lbl {
-      display: flex;
-      justify-content: space-between;
-      color: var(--dim);
-      font-size: clamp(0.75rem, 0.95vh, 1.1rem);
+      display: flex; justify-content: space-between;
+      font-size: 0.62vh; color: var(--dim); letter-spacing: 0.18em;
     }
-    .sys-lbl span { color: var(--accent); }
+    .sys-lbl span { color: var(--text); }
     .sys-trk {
-      height: 1.2rem;
-      background: rgba(255,255,255,0.08);
-      border-radius: 2px;
-      overflow: hidden;
+      height: 2px; background: rgba(255,255,255,0.07);
+      border-radius: 2px; overflow: hidden;
     }
-    .sys-fill { height: 100%; transition: width 0.3s ease; }
-    .sys-hr { border: none; height: 1px; background: var(--border); margin: 0.8vh 0; }
+    .sys-fill { height: 100%; border-radius: 2px; transition: width 0.9s ease; }
+    .sys-hr { border: none; border-top: 1px solid var(--border); margin: 0.1vh 0; }
     .sys-rd {
-      display: flex;
-      justify-content: space-between;
-      font-size: clamp(0.7rem, 0.9vh, 1rem);
-      color: var(--dim);
-      padding: 0.4vh 0;
+      display: flex; justify-content: space-between;
+      font-size: 0.62vh; color: var(--dim); letter-spacing: 0.15em;
     }
-    .sys-rd span:first-child { color: var(--dim); }
-    .sys-rd span:last-child { color: var(--text); font-weight: 600; }
+    .sys-rd span { color: var(--accent); }
 
-    /* Modal for hub content */
-    #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
-    #modal.open { display: flex; }
-    .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 2vh; max-width: 80vw; max-height: 80vh; overflow: auto; }
-
-    /* Theme buttons */
-    .theme-row { display: flex; gap: 0.6vw; margin-bottom: 1.2vh; flex-wrap: wrap; }
-    .thm-btn {
-      padding: 0.7vh 1.2vh;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border);
-      color: var(--dim);
-      border-radius: 2px;
-      font-family: var(--orb);
-      font-size: clamp(0.75rem, 0.95vh, 1.1rem);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 600;
+    /* ══════════════════════════════
+       BOOT
+    ══════════════════════════════ */
+    #boot {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1.8vh; transition: opacity 0.5s;
     }
-    .thm-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .thm-btn.active {
-      background: rgba(0, 210, 185, 0.2);
-      border-color: var(--accent);
+    #boot.off { opacity: 0; pointer-events: none; }
+    .boot-logo {
+      font-family: var(--orb); font-size: 5.5vh;
+      font-weight: 900; letter-spacing: 0.55em;
       color: var(--accent);
-      box-shadow: 0 0 12px var(--accent-glow);
+      text-shadow: 0 0 45px var(--accent-glow), 0 0 90px rgba(0,210,185,0.12);
+    }
+    .boot-sub { font-size: 0.85vh; letter-spacing: 0.55em; color: var(--dim); }
+    .boot-track { width: 28vw; height: 1px; background: rgba(255,255,255,0.09); overflow: hidden; }
+    .boot-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+    .boot-stat { font-size: 0.68vh; color: var(--dim); letter-spacing: 0.32em; }
+
+    /* ══════════════════════════════
+       RIPPLE
+    ══════════════════════════════ */
+    .rpl {
+      position: fixed; border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      animation: rpl-anim 0.55s ease-out forwards;
+    }
+    @keyframes rpl-anim {
+      0%   { width: 0; height: 0; opacity: 0.75; }
+      100% { width: 7vh; height: 7vh; opacity: 0; }
     }
 
-    .news-item {
-      padding: 1.2vh;
-      border-left: 2px solid var(--accent);
-      background: rgba(0, 210, 185, 0.06);
-      margin-bottom: 0.8vh;
-      border-radius: 2px;
+    /* ══════════════════════════════
+       MODAL
+    ══════════════════════════════ */
+    #modal {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.72);
+      display: none; align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
     }
-    .news-item h3 { font-size: clamp(0.9rem, 1.1vh, 1.3rem); color: var(--accent); margin-bottom: 0.4vh; }
-    .news-item p { font-size: clamp(0.75rem, 0.95vh, 1.1rem); color: var(--dim); line-height: 1.5; }
+    #modal.open { display: flex; }
+    .modal-box {
+      background: rgba(6,12,24,0.98);
+      border: 1px solid var(--border-hi);
+      padding: 2vh 2.4vh;
+      display: flex; flex-direction: column;
+      gap: 1.1vh; min-width: 24vw;
+    }
+    .modal-title {
+      font-family: var(--orb); font-size: 0.88vh;
+      color: var(--accent); letter-spacing: 0.42em;
+    }
+    .modal-in {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: var(--mono);
+      font-size: 0.95vh; padding: 0.58vh 0.8vh;
+      outline: none; width: 100%;
+      caret-color: var(--accent);
+    }
+    .modal-in:focus { border-color: var(--accent); }
+    .modal-acts { display: flex; gap: 0.7vh; justify-content: flex-end; }
+    .mbtn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text); font-family: var(--mono);
+      font-size: 0.65vh; padding: 0.38vh 1.1vh;
+      cursor: pointer; letter-spacing: 0.2em;
+      transition: all 0.14s;
+    }
+    .mbtn:hover { border-color: var(--text); }
+    .mbtn.pri { border-color: var(--accent); color: var(--accent); }
+    .mbtn.del { border-color: var(--a2); color: var(--a2); }
 
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    /* ── MISC ── */
+    #fps {
+      position: fixed; top: 0.45vh; right: 0.5vw;
+      font-size: 0.58vh; color: var(--dim);
+      letter-spacing: 0.22em; z-index: 3;
+      pointer-events: none;
+    }
+    ::-webkit-scrollbar { width: 2.5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--border-hi); }
 
-    @media (max-width: 1200px) {
-      #surface { padding: 1vh 0.8vw; gap: 0.6vw; }
-      #p-clock, #p-weather, #p-tasks, #p-media, #p-sys { width: auto; flex: 1 1 calc(50% - 0.4vw); min-width: 0; }
-      #p-hub { min-width: 0; }
+    /* ── THEME SWITCHER ── */
+    #theme-sw {
+      position: fixed; bottom: 1.2vh; right: 1vw;
+      display: flex; gap: 0.5vh; z-index: 10;
     }
-    @media (max-width: 768px) {
-      #surface { flex-wrap: wrap; }
-      .panel { flex: 1 1 100%; width: 100% !important; }
+    .thm-btn {
+      width: 1.1vh; height: 1.1vh; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer; transition: transform 0.15s;
     }
+    .thm-btn:hover { transform: scale(1.4); }
+    .thm-btn.active { border-color: #fff; }
   </style>
 </head>
 <body>
-<div id="bg"></div>
-<div id="surface">
-  <!-- CLOCK PANEL -->
-  <div class="panel" id="p-clock">
-    <div class="ph">
-      <span>⏰ CHRONOMETER</span>
-      <button class="panel-fs-btn" data-panel="p-clock" title="Fullscreen">⛶</button>
-    </div>
-    <div class="pb clock-body">
-      <div class="t-hhmm" id="thhmm">--:--</div>
-      <div class="t-ss" id="tss">--</div>
-      <svg class="analog-svg" viewBox="0 0 100 100" id="analog-clock">
-        <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,210,185,0.15)" stroke-width="1"/>
-        <circle cx="50" cy="50" r="3" fill="var(--accent)"/>
-        <line id="hh" x1="50" y1="50" x2="50" y2="30" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round"/>
-        <line id="mm" x1="50" y1="50" x2="50" y2="15" stroke="var(--accent)" stroke-width="1" stroke-linecap="round"/>
-        <line id="ss" x1="50" y1="50" x2="50" y2="10" stroke="var(--a2)" stroke-width="0.8" stroke-linecap="round"/>
-      </svg>
-      <div class="t-date">
-        <div id="tdate">--/--/--</div>
-        <div id="tdow">---</div>
-      </div>
-      <div class="day-prog">
-        <div class="day-prog-lbl"><span>DAY</span><span id="dpct">0%</span></div>
-        <div class="day-prog-track"><div class="day-prog-fill" id="dprog"></div></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- WEATHER PANEL -->
-  <div class="panel" id="p-weather">
-    <div class="ph">
-      <span>☁ WEATHER</span>
-      <button class="panel-fs-btn" data-panel="p-weather" title="Fullscreen">⛶</button>
-    </div>
-    <div class="pb wx-body">
-      <div class="wx-loc" id="wxloc">PETOSKEY, MI</div>
-      <div class="wx-main">
-        <div class="wx-emoji" id="wxemoji">🌤</div>
-        <div>
-          <div class="wx-temp" id="wxtemp">72</div>
-          <div class="wx-unit">°F</div>
-        </div>
-      </div>
-      <div class="wx-cond" id="wxcond">PARTLY CLOUDY</div>
-      <div class="wx-grid">
-        <div class="wx-stat">💧 <b id="wxhumid">65</b>%</div>
-        <div class="wx-stat">🌪 <b id="wxwind">12</b> mph</div>
-        <div class="wx-stat">🧭 <b id="wxdir">NW</b></div>
-        <div class="wx-stat">🔽 <b id="wxpres">30.1</b> in</div>
-      </div>
-      <div class="wx-fc">
-        <div class="fc-day"><div class="fc-dn">MON</div><div class="fc-ic">🌤</div><div class="fc-temps"><span class="fc-hi">75</span><span>62</span></div></div>
-        <div class="fc-day"><div class="fc-dn">TUE</div><div class="fc-ic">☁</div><div class="fc-temps"><span class="fc-hi">68</span><span>58</span></div></div>
-        <div class="fc-day"><div class="fc-dn">WED</div><div class="fc-ic">🌧</div><div class="fc-temps"><span class="fc-hi">65</span><span>55</span></div></div>
-      </div>
-    </div>
-  </div>
+<canvas id="bg"></canvas>
 
-  <!-- HUB (CENTER) -->
-  <div class="panel" id="p-hub">
-    <div class="ph">
-      <span>◆ COMMAND HUB</span>
-      <button class="panel-fs-btn" data-panel="p-hub" title="Fullscreen">⛶</button>
-    </div>
-    <div class="hub-tabs">
-      <button class="hub-tab active" data-tab="l">LATEST</button>
-      <button class="hub-tab" data-tab="n">NOTES</button>
-      <button class="hub-tab" data-tab="s">SETTINGS</button>
-    </div>
-    <div class="pb hub-body" id="hub-body">
-      <!-- Will be populated by JS -->
-    </div>
-  </div>
-
-  <!-- TASKS PANEL -->
-  <div class="panel" id="p-tasks">
-    <div class="ph">
-      <span>✓ MISSION LOG</span>
-      <button class="panel-fs-btn" data-panel="p-tasks" title="Fullscreen">⛶</button>
-    </div>
-    <div class="task-header">
-      <div class="task-cnt" id="tcnt">0 ACTIVE</div>
-      <div class="task-stat" id="tstats">ALL CLEAR</div>
-      <div class="task-cmpl" id="tcmpl"></div>
-    </div>
-    <div class="pb" style="overflow-y: auto; padding: 0;">
-      <div class="task-list" id="tasklist"></div>
-    </div>
-    <div style="padding: 0.8vh; border-top: 1px solid var(--border); flex-shrink: 0;">
-      <input type="text" id="tin" class="task-input" placeholder="Add new objective..." maxlength="64">
-      <button id="tadd" class="task-btn">ADD OBJECTIVE</button>
-    </div>
-  </div>
-
-  <!-- MEDIA PANEL -->
-  <div class="panel" id="p-media">
-    <div class="ph">
-      <span>♫ SIGNAL</span>
-      <button class="panel-fs-btn" data-panel="p-media" title="Fullscreen">⛶</button>
-    </div>
-    <div class="pb med-body">
-      <canvas id="mc" class="med-canvas"></canvas>
-      <div class="med-vu" id="vuwrap"></div>
-      <div class="med-info">
-        <div id="mstatus" style="font-size: clamp(0.7rem, 0.85vh, 1rem);">MIC: UNAVAILABLE</div>
-        <div id="mtrack" style="margin-top: 0.4vh;"><strong id="mtrack">--</strong></div>
-        <div id="martist" style="font-size: clamp(0.65rem, 0.8vh, 0.95rem); margin-top: 0.2vh;">--</div>
-      </div>
-      <div class="med-btns">
-        <button class="med-btn" id="mprev">◀ PREV</button>
-        <button class="med-btn" id="mplay">▶ PLAY</button>
-        <button class="med-btn" id="mnext">NEXT ▶</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SYSTEM PANEL -->
-  <div class="panel" id="p-sys">
-    <div class="ph">
-      <span>⚙ SYSTEM</span>
-      <button class="panel-fs-btn" data-panel="p-sys" title="Fullscreen">⛶</button>
-    </div>
-    <div class="pb sys-body" id="sysbody"></div>
-  </div>
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-logo">MERIDIAN</div>
+  <div class="boot-sub">COMMAND SURFACE // INITIALIZING SYSTEMS</div>
+  <div class="boot-track"><div class="boot-fill" id="bfill"></div></div>
+  <div class="boot-stat" id="bstat">STANDBY</div>
 </div>
 
+<!-- FPS -->
+<div id="fps">● 60 FPS</div>
+
+<!-- THEME SWITCHER -->
+<div id="theme-sw">
+  <div class="thm-btn active" style="background:#00D2B9" data-theme="teal" title="Teal"></div>
+  <div class="thm-btn" style="background:#FFB020" data-theme="amber" title="Amber"></div>
+  <div class="thm-btn" style="background:#7B6FE8" data-theme="violet" title="Violet"></div>
+  <div class="thm-btn" style="background:#FF4B6E" data-theme="rose" title="Rose"></div>
+</div>
+
+<!-- MAIN SURFACE -->
+<div id="surface">
+
+  <!-- 1 · CHRONOS -->
+  <div class="panel" id="p-clock">
+    <div class="ph">CHRONOS<div class="ind"><div class="dot"></div>SYNC</div></div>
+    <div class="pb">
+      <div class="clock-body">
+        <div class="t-hhmm" id="t-hm">00:00</div>
+        <div class="t-ss" id="t-s">:00</div>
+        <svg class="analog-svg" id="asvg" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,210,185,0.18)" stroke-width="0.5"/>
+          <g id="ticks"></g>
+          <line id="hh" x1="50" y1="50" x2="50" y2="23" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line id="hm" x1="50" y1="50" x2="50" y2="14" stroke="rgba(0,210,185,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+          <line id="hs" x1="50" y1="55" x2="50" y2="10" stroke="#FF4B6E" stroke-width="0.8" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="2.2" fill="var(--accent)"/>
+        </svg>
+        <div class="t-date" id="t-date">—</div>
+        <div class="day-prog">
+          <div class="day-prog-lbl">
+            <span>DAY PROGRESS</span>
+            <span id="dpct">0%</span>
+          </div>
+          <div class="day-prog-track">
+            <div class="day-prog-fill" id="dfill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · ATMOSPHERE -->
+  <div class="panel" id="p-weather">
+    <div class="ph">ATMOSPHERE<div class="ind"><div class="dot" style="background:var(--a3)"></div><span id="wxst">LOCATING</span></div></div>
+    <div class="pb">
+      <div class="wx-body">
+        <div class="wx-loc" id="wxloc">ACQUIRING COORDINATES...</div>
+        <div class="wx-main">
+          <div class="wx-temp" id="wxt">--</div>
+          <div class="wx-unit">°F</div>
+          <div class="wx-emoji" id="wxe">◌</div>
+        </div>
+        <div class="wx-cond" id="wxc">PENDING TELEMETRY</div>
+        <div class="wx-grid">
+          <div class="wx-stat">WIND&nbsp;<b id="wxw">--</b></div>
+          <div class="wx-stat">HUMID&nbsp;<b id="wxh">--</b></div>
+          <div class="wx-stat">FEELS&nbsp;<b id="wxf">--</b></div>
+          <div class="wx-stat">DEW&nbsp;<b id="wxd">--</b></div>
+        </div>
+        <div class="wx-fc" id="wxfc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 · HUB -->
+  <div class="panel" id="p-hub">
+    <div class="hub-tabs" id="hub-tabs">
+      <div class="hub-tab active" data-tab="l">LAUNCH</div>
+      <div class="hub-tab" data-tab="n">NOTES</div>
+      <div class="hub-tab" data-tab="s">SEARCH</div>
+    </div>
+    <div class="pb">
+      <!-- LAUNCH -->
+      <div class="hub-view active" id="vl">
+        <div class="app-grid" id="agrid"></div>
+      </div>
+      <!-- NOTES -->
+      <div class="hub-view" id="vn">
+        <textarea class="notes-area" id="narea"
+          placeholder="// NOTES — AUTO-SAVED&#10;// PRESS ALT+2 TO FOCUS"></textarea>
+        <div class="notes-footer">
+          <span id="ncnt">0 CHARS · 0 WORDS</span>
+          <button class="btn-sm btn-danger" id="nclr">CLEAR</button>
+        </div>
+      </div>
+      <!-- SEARCH -->
+      <div class="hub-view" id="vs">
+        <div class="srch-title">SEARCH COMMAND</div>
+        <div class="srch-wrap">
+          <input class="srch-in" id="sin" placeholder="QUERY OR URL..." autocomplete="off">
+          <button class="srch-btn" id="sbtn">EXECUTE</button>
+        </div>
+        <div class="srch-quick">
+          <button class="qbtn" onclick="go('https://google.com')">GOOGLE</button>
+          <button class="qbtn" onclick="go('https://github.com')">GITHUB</button>
+          <button class="qbtn" onclick="go('https://youtube.com')">YOUTUBE</button>
+          <button class="qbtn" onclick="go('https://mail.google.com')">GMAIL</button>
+          <button class="qbtn" onclick="go('https://notion.so')">NOTION</button>
+          <button class="qbtn" onclick="go('https://calendar.google.com')">CALENDAR</button>
+          <button class="qbtn" onclick="go('https://open.spotify.com')">SPOTIFY</button>
+          <button class="qbtn" onclick="go('https://claude.ai')">CLAUDE</button>
+          <button class="qbtn" onclick="go('https://x.com')">X/TWITTER</button>
+          <button class="qbtn" onclick="go('https://reddit.com')">REDDIT</button>
+          <button class="qbtn" onclick="go('https://news.ycombinator.com')">HACKERNEWS</button>
+          <button class="qbtn" onclick="go('https://maps.google.com')">MAPS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · MISSION LOG -->
+  <div class="panel" id="p-tasks">
+    <div class="ph">MISSION LOG<div class="ind"><span id="tcnt">0 ACTIVE</span></div></div>
+    <div class="pb">
+      <div class="tasks-body">
+        <div class="task-add">
+          <input class="task-in" id="tin" placeholder="NEW OBJECTIVE...">
+          <button class="task-add-btn" id="tadd">+</button>
+        </div>
+        <div class="task-list" id="tlist"></div>
+        <div class="task-footer">
+          <span id="tstats">NO OBJECTIVES</span>
+          <span id="tcmpl"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 · SIGNAL -->
+  <div class="panel" id="p-media">
+    <div class="ph">SIGNAL<div class="ind"><div class="dot" style="background:var(--a4)"></div>MONITORING</div></div>
+    <div class="pb">
+      <div class="media-body">
+        <canvas id="mc"></canvas>
+        <div class="media-info">
+          <div class="m-track" id="mtrack">AWAITING SIGNAL</div>
+          <div class="m-artist" id="martist">NO MEDIA DETECTED</div>
+        </div>
+        <div class="vu-wrap" id="vuwrap"></div>
+        <div class="m-ctrls">
+          <button class="m-btn" id="mprev">⏮</button>
+          <button class="m-btn play" id="mplay">⏯</button>
+          <button class="m-btn" id="mnext">⏭</button>
+        </div>
+        <div class="m-status" id="mstatus">MIC: CLICK ⏯ TO ENABLE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 · TELEMETRY -->
+  <div class="panel" id="p-sys">
+    <div class="ph">TELEMETRY<div class="ind"><div class="dot"></div>LIVE</div></div>
+    <div class="pb">
+      <div class="sys-body" id="sysbody"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
 <div id="modal">
-  <div class="modal-content" id="modal-content"></div>
+  <div class="modal-box">
+    <div class="modal-title" id="mtitle">CONFIGURE APP</div>
+    <input class="modal-in" id="micon" placeholder="ICON (emoji, e.g. 🔗)">
+    <input class="modal-in" id="mname" placeholder="APP NAME">
+    <input class="modal-in" id="murl" placeholder="URL (https://...)">
+    <div class="modal-acts">
+      <button class="mbtn del" id="mdel" style="display:none">DELETE</button>
+      <button class="mbtn" id="mcancel">CANCEL</button>
+      <button class="mbtn pri" id="msave">SAVE</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const $=(id)=>document.getElementById(id);
-const clamp=(v,mn,mx)=>Math.max(mn,Math.min(mx,v));
+/* ═══════════════════════════════════════════════════════════
+   MERIDIAN — Command Surface v1.0
+   © 2025 — Open for personal use
+═══════════════════════════════════════════════════════════ */
 
-/* ══════════════════════════════════════════════════════════
-   PANEL DRAGGING & FULLSCREEN
-══════════════════════════════════════════════════════════ */
-let dragState = {
-  panel: null,
-  offsetX: 0,
-  offsetY: 0,
-  startX: 0,
-  startY: 0,
-  longPressTimer: null,
-  isDragging: false,
+const $ = id => document.getElementById(id);
+const pad = (n, w=2) => String(Math.floor(n)).padStart(w, '0');
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+const DAYS = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const MNS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+// ── WMO WEATHER CODES ──────────────────────────────────────
+const WMO = {
+  0:{t:'CLEAR SKY',i:'☀️'},1:{t:'MAINLY CLEAR',i:'🌤️'},
+  2:{t:'PARTLY CLOUDY',i:'⛅'},3:{t:'OVERCAST',i:'☁️'},
+  45:{t:'FOG',i:'🌫️'},48:{t:'RIME FOG',i:'🌫️'},
+  51:{t:'LIGHT DRIZZLE',i:'🌦️'},53:{t:'DRIZZLE',i:'🌧️'},55:{t:'HEAVY DRIZZLE',i:'🌧️'},
+  61:{t:'LIGHT RAIN',i:'🌧️'},63:{t:'RAIN',i:'🌧️'},65:{t:'HEAVY RAIN',i:'🌧️'},
+  71:{t:'LIGHT SNOW',i:'🌨️'},73:{t:'SNOW',i:'❄️'},75:{t:'HEAVY SNOW',i:'❄️'},
+  77:{t:'SNOW GRAINS',i:'❄️'},80:{t:'SHOWERS',i:'🌦️'},81:{t:'SHOWERS',i:'🌧️'},
+  82:{t:'HEAVY SHOWERS',i:'⛈️'},85:{t:'SNOW SHOWERS',i:'🌨️'},86:{t:'HEAVY SNOW SHOWERS',i:'❄️'},
+  95:{t:'THUNDERSTORM',i:'⛈️'},96:{t:'STORM + HAIL',i:'⛈️'},99:{t:'STORM + HAIL',i:'⛈️'},
 };
-let fullscreenPanel = null;
 
-document.querySelectorAll('.ph').forEach(header => {
-  header.addEventListener('touchstart', startDrag, { passive: false });
-  header.addEventListener('mousedown', startDrag, { passive: false });
-  header.addEventListener('touchmove', doDrag, { passive: false });
-  header.addEventListener('mousemove', doDrag, { passive: false });
-  header.addEventListener('touchend', endDrag);
-  header.addEventListener('mouseup', endDrag);
-});
-
-function startDrag(e) {
-  if (fullscreenPanel) return;
-  const panel = e.currentTarget.closest('.panel');
-  if (!panel) return;
-  
-  dragState.panel = panel;
-  dragState.startX = e.touches ? e.touches[0].clientX : e.clientX;
-  dragState.startY = e.touches ? e.touches[0].clientY : e.clientY;
-  dragState.offsetX = 0;
-  dragState.offsetY = 0;
-  
-  dragState.longPressTimer = setTimeout(() => {
-    dragState.isDragging = true;
-    panel.classList.add('dragging');
-  }, 300);
-}
-
-function doDrag(e) {
-  if (!dragState.isDragging || !dragState.panel) return;
-  e.preventDefault();
-  
-  const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-  const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-  
-  dragState.offsetX = currentX - dragState.startX;
-  dragState.offsetY = currentY - dragState.startY;
-  
-  dragState.panel.style.transform = `translate(${dragState.offsetX}px, ${dragState.offsetY}px)`;
-}
-
-function endDrag() {
-  if (dragState.longPressTimer) clearTimeout(dragState.longPressTimer);
-  
-  if (dragState.isDragging && dragState.panel) {
-    dragState.panel.style.transform = '';
-    dragState.panel.classList.remove('dragging');
-    dragState.isDragging = false;
+/* ══════════════════════════════════════════════════════════
+   BACKGROUND CANVAS — stars, aurora, shooting stars, grid
+══════════════════════════════════════════════════════════ */
+(function(){
+  const cvs = $('bg'), ctx = cvs.getContext('2d');
+  let W, H;
+  const NSTARS = 280;
+  const stars = Array.from({length:NSTARS}, () => ({
+    x:Math.random(), y:Math.random(),
+    r:Math.random()*1.4+0.2,
+    a:Math.random(), da:(Math.random()-0.5)*0.004
+  }));
+  const auroras = [
+    {y:0.58,h:0.38,rgb:[0,210,185],ph:0,sp:0.00028},
+    {y:0.50,h:0.26,rgb:[123,111,232],ph:1.6,sp:0.00018},
+    {y:0.72,h:0.22,rgb:[0,90,75],ph:3.1,sp:0.00038},
+  ];
+  let shot = null;
+  function resize(){
+    W = cvs.width = window.innerWidth;
+    H = cvs.height = window.innerHeight;
   }
-  
-  dragState.panel = null;
-}
-
-// Fullscreen buttons
-document.querySelectorAll('.panel-fs-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const panelId = btn.dataset.panel;
-    const panel = $(panelId);
-    
-    if (fullscreenPanel) {
-      exitFullscreen();
-    } else {
-      enterFullscreen(panel);
-    }
-  });
-});
-
-function enterFullscreen(panel) {
-  fullscreenPanel = panel;
-  panel.classList.add('fullscreen-mode');
-  
-  document.querySelectorAll('.panel').forEach(p => {
-    if (p !== panel) {
-      p.classList.add('compact-fullscreen');
-      p.style.opacity = '0.4';
-      p.style.pointerEvents = 'none';
-    }
-  });
-}
-
-function exitFullscreen() {
-  if (fullscreenPanel) {
-    fullscreenPanel.classList.remove('fullscreen-mode');
-    
-    document.querySelectorAll('.panel').forEach(p => {
-      if (p !== fullscreenPanel) {
-        p.classList.remove('compact-fullscreen');
-        p.style.opacity = '1';
-        p.style.pointerEvents = 'auto';
+  window.addEventListener('resize', resize); resize();
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#030509'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(0,210,185,0.022)'; ctx.lineWidth=0.5;
+    const gs = Math.max(W,H)/32;
+    for(let x=0;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // Aurora
+    auroras.forEach(a=>{
+      a.ph+=a.sp;
+      const amp=(Math.sin(a.ph)+1)*0.5;
+      const al=amp*0.055+0.018;
+      const [r,g,b]=a.rgb;
+      const grad=ctx.createLinearGradient(0,a.y*H,0,(a.y+a.h)*H);
+      grad.addColorStop(0,`rgba(${r},${g},${b},0)`);
+      grad.addColorStop(0.35,`rgba(${r},${g},${b},${al})`);
+      grad.addColorStop(0.65,`rgba(${r},${g},${b},${al*0.5})`);
+      grad.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      ctx.beginPath(); ctx.moveTo(0,a.y*H);
+      for(let x=0;x<=W;x+=18){
+        const wave=Math.sin(x*0.0025+a.ph*2.5)*H*0.028;
+        ctx.lineTo(x,a.y*H+wave);
       }
+      ctx.lineTo(W,(a.y+a.h)*H); ctx.lineTo(0,(a.y+a.h)*H);
+      ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
     });
-    
-    fullscreenPanel = null;
+    // Stars
+    stars.forEach(s=>{
+      s.a=clamp(s.a+s.da,0,1);
+      if(s.a<=0||s.a>=1)s.da*=-1;
+      ctx.beginPath();
+      ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a*0.68})`;
+      ctx.fill();
+    });
+    // Shooting star
+    if(!shot && Math.random()<0.0025){
+      shot={x:Math.random()*W,y:0,dx:(Math.random()-0.25)*7,dy:Math.random()*4+2,life:1,trail:[]};
+    }
+    if(shot){
+      shot.trail.push({x:shot.x,y:shot.y});
+      if(shot.trail.length>22)shot.trail.shift();
+      shot.x+=shot.dx; shot.y+=shot.dy; shot.life-=0.022;
+      if(shot.trail.length>1){
+        const g=ctx.createLinearGradient(shot.trail[0].x,shot.trail[0].y,shot.x,shot.y);
+        g.addColorStop(0,'rgba(255,255,255,0)');
+        g.addColorStop(1,`rgba(0,210,185,${shot.life})`);
+        ctx.strokeStyle=g; ctx.lineWidth=1.5;
+        ctx.beginPath();
+        shot.trail.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+        ctx.stroke();
+      }
+      if(shot.life<=0||shot.x>W+100||shot.y>H+100)shot=null;
+    }
+    requestAnimationFrame(draw);
   }
-}
+  draw();
+})();
 
-// Close fullscreen with ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && fullscreenPanel) {
-    exitFullscreen();
-  }
+/* ══════════════════════════════════════════════════════════
+   FPS COUNTER
+══════════════════════════════════════════════════════════ */
+(function(){
+  let f=0,lt=performance.now();
+  (function tick(t){f++;if(t-lt>=1000){$('fps').textContent=`● ${f} FPS`;f=0;lt=t;}requestAnimationFrame(tick);})(performance.now());
+})();
+
+/* ══════════════════════════════════════════════════════════
+   RIPPLE
+══════════════════════════════════════════════════════════ */
+document.addEventListener('click', e=>{
+  const r=document.createElement('div');
+  r.className='rpl'; r.style.left=e.clientX+'px'; r.style.top=e.clientY+'px';
+  document.body.appendChild(r); setTimeout(()=>r.remove(),600);
 });
 
 /* ══════════════════════════════════════════════════════════
-   CLOCK UPDATES
+   BOOT SEQUENCE
 ══════════════════════════════════════════════════════════ */
-function updateClock(){
-  const now=new Date();
-  const h=now.getHours(), m=now.getMinutes(), s=now.getSeconds();
-  const hm=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-  $('thhmm').textContent=hm;
-  $('tss').textContent=String(s).padStart(2,'0');
-  
-  const ang=(v,max)=>(v/max)*360;
-  $('hh').style.transform=`rotate(${ang(h%12,12)+ang(m,720)}deg)`;
-  $('mm').style.transform=`rotate(${ang(m,60)+ang(s,3600)}deg)`;
-  $('ss').style.transform=`rotate(${ang(s,60)}deg)`;
-  
-  const dow=['SUN','MON','TUE','WED','THU','FRI','SAT'][now.getDay()];
-  const date=String(now.getMonth()+1).padStart(2,'0')+'/'+String(now.getDate()).padStart(2,'0')+'/'+String(now.getFullYear()).slice(-2);
-  $('tdate').textContent=date;
-  $('tdow').textContent=dow;
-  
-  const start=new Date(now.getFullYear(),0,1);
-  const end=new Date(now.getFullYear()+1,0,1);
-  const dpct=Math.round((now-start)/(end-start)*100);
-  $('dpct').textContent=dpct+'%';
-  $('dprog').style.width=dpct+'%';
+const BOOT_MSGS = [
+  'LOADING MODULES...','CONNECTING TO SENSORS...',
+  'SYNCING ATOMIC CLOCK...','CALIBRATING TELEMETRY...',
+  'FETCHING ATMOSPHERIC DATA...','ESTABLISHING NETWORK LINK...',
+  'MERIDIAN ONLINE'
+];
+function runBoot(){
+  const fill=$('bfill'), stat=$('bstat');
+  let i=0;
+  function step(){
+    if(i<BOOT_MSGS.length){
+      stat.textContent=BOOT_MSGS[i];
+      fill.style.width=((i+1)/BOOT_MSGS.length*100)+'%';
+      i++;
+      setTimeout(step, i===BOOT_MSGS.length ? 350 : 200);
+    } else {
+      const b=$('boot'); b.classList.add('off');
+      setTimeout(()=>{ b.style.display='none'; revealPanels(); },500);
+    }
+  }
+  setTimeout(step,300);
 }
-setInterval(updateClock,500); updateClock();
+function revealPanels(){
+  document.querySelectorAll('.panel').forEach((p,i)=>setTimeout(()=>p.classList.add('on'),i*75));
+}
 
 /* ══════════════════════════════════════════════════════════
-   WEATHER (SIMULATED)
+   CLOCK PANEL
 ══════════════════════════════════════════════════════════ */
-function loadWeather(){
-  const temps=[68,72,75,70,65,60,58,72];
-  const temp=temps[Math.floor(Math.random()*temps.length)];
-  const humid=clamp(Math.random()*100,40,90);
-  const wind=clamp(Math.random()*20,5,18);
-  const dirs=['N','NE','E','SE','S','SW','W','NW'];
-  const dir=dirs[Math.floor(Math.random()*dirs.length)];
-  const pres=(30+Math.random()*0.3).toFixed(1);
-  const emojis=['🌤','☀','⛅','☁','🌥'];
-  const emoji=emojis[Math.floor(Math.random()*emojis.length)];
-  
-  $('wxtemp').textContent=Math.round(temp);
-  $('wxhumid').textContent=Math.round(humid);
-  $('wxwind').textContent=Math.round(wind);
-  $('wxdir').textContent=dir;
-  $('wxpres').textContent=pres;
-  $('wxemoji').textContent=emoji;
+// Build tick marks
+(function(){
+  const g=document.getElementById('ticks');
+  for(let i=0;i<60;i++){
+    const a=(i/60)*2*Math.PI-Math.PI/2;
+    const maj=i%5===0, r1=maj?39:43, r2=47;
+    const x1=50+r1*Math.cos(a), y1=50+r1*Math.sin(a);
+    const x2=50+r2*Math.cos(a), y2=50+r2*Math.sin(a);
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
+    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('stroke',maj?'rgba(0,210,185,0.7)':'rgba(0,210,185,0.22)');
+    l.setAttribute('stroke-width',maj?'1.2':'0.5');
+    g.appendChild(l);
+  }
+})();
+
+function updateClock(){
+  const n=new Date();
+  const h=n.getHours(),m=n.getMinutes(),s=n.getSeconds(),ms=n.getMilliseconds();
+  $('t-hm').textContent=`${pad(h)}:${pad(m)}`;
+  $('t-s').textContent=`:${pad(s)}`;
+  // Date + day of year
+  const doy=Math.floor((n-new Date(n.getFullYear(),0,0))/86400000);
+  const leap=new Date(n.getFullYear(),1,29).getMonth()===1;
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  $('t-date').textContent=`${DAYS[n.getDay()]} // ${pad(n.getDate())} ${MNS[n.getMonth()]} ${n.getFullYear()}\nDAY ${doy} / ${leap?366:365} · ${tz}`;
+  // Day progress
+  const pct=((h*3600+m*60+s)/86400*100).toFixed(1);
+  $('dfill').style.width=pct+'%'; $('dpct').textContent=pct+'%';
+  // Analog hands (smooth)
+  const sa=(s+ms/1000)/60*360;
+  const ma=(m+s/60)/60*360;
+  const ha=((h%12)+m/60)/12*360;
+  $('hs').setAttribute('transform',`rotate(${sa},50,50)`);
+  $('hm').setAttribute('transform',`rotate(${ma},50,50)`);
+  $('hh').setAttribute('transform',`rotate(${ha},50,50)`);
+}
+setInterval(updateClock,50); updateClock();
+
+/* ══════════════════════════════════════════════════════════
+   WEATHER PANEL
+══════════════════════════════════════════════════════════ */
+async function loadWeather(){
+  if(!navigator.geolocation){ $('wxloc').textContent='NO GEOLOCATION'; return; }
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:lat,longitude:lon}=pos.coords;
+    // Reverse geocode
+    try{
+      const gr=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const gd=await gr.json();
+      const city=gd.address?.city||gd.address?.town||gd.address?.village||gd.address?.county||'UNKNOWN';
+      const state=gd.address?.state_code||'';
+      $('wxloc').textContent=`${city.toUpperCase()}${state?', '+state.toUpperCase():''}`;
+      $('wxst').textContent='LIVE';
+    } catch(e){ $('wxloc').textContent=`${lat.toFixed(2)}°N ${Math.abs(lon).toFixed(2)}°W`; }
+    // Forecast
+    try{
+      const wr=await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`+
+        `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m,dew_point_2m`+
+        `&daily=temperature_2m_max,temperature_2m_min,weather_code`+
+        `&temperature_unit=fahrenheit&wind_speed_unit=mph`+
+        `&timezone=auto&forecast_days=5`
+      );
+      const w=await wr.json(); const c=w.current; const d=w.daily;
+      const wmo=WMO[c.weather_code]||{t:'UNKNOWN',i:'◌'};
+      $('wxt').textContent=Math.round(c.temperature_2m);
+      $('wxe').textContent=wmo.i; $('wxc').textContent=wmo.t;
+      $('wxw').textContent=`${Math.round(c.wind_speed_10m)} MPH`;
+      $('wxh').textContent=`${c.relative_humidity_2m}%`;
+      $('wxf').textContent=`${Math.round(c.apparent_temperature)}°F`;
+      $('wxd').textContent=`${Math.round(c.dew_point_2m)}°F`;
+      // Forecast strip
+      const dns=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+      const fc=$('wxfc'); fc.innerHTML='';
+      for(let i=1;i<Math.min(5,d.time.length);i++){
+        const dt=new Date(d.time[i]+'T12:00:00');
+        const dw=WMO[d.weather_code[i]]||{i:'◌'};
+        fc.innerHTML+=`<div class="fc-day">
+          <span class="fc-dn">${dns[dt.getDay()]}</span>
+          <span class="fc-ic">${dw.i}</span>
+          <div class="fc-temps">
+            <span class="fc-hi">${Math.round(d.temperature_2m_max[i])}°</span>
+            <span style="color:var(--dim)">${Math.round(d.temperature_2m_min[i])}°</span>
+          </div></div>`;
+      }
+    } catch(e){ $('wxc').textContent='SIGNAL LOST'; }
+  }, ()=>{ $('wxloc').textContent='PERMISSION DENIED'; $('wxst').textContent='OFFLINE'; });
 }
 loadWeather();
 
 /* ══════════════════════════════════════════════════════════
-   HUB TABS
+   HUB — APP LAUNCHER
 ══════════════════════════════════════════════════════════ */
-const hubTabs={'l':'Latest News','n':'Personal Notes','s':'Settings'};
-const hubContent={
-  l:`<div style="display:flex;flex-direction:column;gap:1.2vh;">
-      <div class="news-item"><h3>✦ ALERT</h3><p>System optimization complete. All protocols nominal.</p></div>
-      <div class="news-item"><h3>◆ UPDATE</h3><p>New command interface deployed. Enhanced responsiveness across all terminals.</p></div>
-      <div class="news-item"><h3>▲ NOTICE</h3><p>Scheduled maintenance windows now available. Plan accordingly.</p></div>
-     </div>`,
-  n:`<div style="display:flex;flex-direction:column;gap:1.2vh;">
-      <div class="news-item"><h3>⊕ ENTRY 1</h3><p>Time invested in refinement yields exponential returns. Focus on the work in front of you.</p></div>
-      <div class="news-item"><h3>⊕ ENTRY 2</h3><p>Small faithfulness matters. The universe rewards consistent dedication.</p></div>
-      <div class="news-item"><h3>⊕ ENTRY 3</h3><p>Command integrity restored. Ready for next phase of operations.</p></div>
-     </div>`,
-  s:`<div style="padding:1.2vh 0;">
-      <div style="margin-bottom:1.5vh;">
-        <div style="font-size:clamp(0.85rem,1.1vh,1.3rem);color:var(--accent);margin-bottom:0.8vh;font-weight:700;">THEME</div>
-        <div class="theme-row">
-          <button class="thm-btn active" data-theme="teal">TEAL</button>
-          <button class="thm-btn" data-theme="amber">AMBER</button>
-          <button class="thm-btn" data-theme="violet">VIOLET</button>
-          <button class="thm-btn" data-theme="rose">ROSE</button>
-        </div>
-      </div>
-      <div style="font-size:clamp(0.75rem,0.95vh,1.1rem);color:var(--dim);line-height:1.6;">
-        <strong>KEYBOARD:</strong><br>
-        ALT+1: Latest<br>
-        ALT+2: Notes<br>
-        ALT+3: Settings<br>
-        ALT+R: Refresh<br>
-        ESC: Exit Fullscreen
-      </div>
-     </div>`
-};
+const DEF_APPS=[
+  {icon:'🌐',name:'GOOGLE',url:'https://google.com'},
+  {icon:'📧',name:'GMAIL',url:'https://mail.google.com'},
+  {icon:'📅',name:'CALENDAR',url:'https://calendar.google.com'},
+  {icon:'🎵',name:'SPOTIFY',url:'https://open.spotify.com'},
+  {icon:'💬',name:'SLACK',url:'https://slack.com'},
+  {icon:'🐙',name:'GITHUB',url:'https://github.com'},
+  {icon:'📝',name:'NOTION',url:'https://notion.so'},
+  {icon:'🤖',name:'CLAUDE',url:'https://claude.ai'},
+  {icon:'▶️',name:'YOUTUBE',url:'https://youtube.com'},
+  {icon:'🐦',name:'X',url:'https://x.com'},
+  {icon:'💼',name:'LINKEDIN',url:'https://linkedin.com'},
+  {icon:'📰',name:'HACKERNEWS',url:'https://news.ycombinator.com'},
+  {icon:'🗺️',name:'MAPS',url:'https://maps.google.com'},
+  {icon:'☁️',name:'DRIVE',url:'https://drive.google.com'},
+  {icon:'📊',name:'SHEETS',url:'https://docs.google.com/spreadsheets'},
+  {icon:'🎮',name:'STEAM',url:'https://store.steampowered.com'},
+  {icon:'💰',name:'COINBASE',url:'https://coinbase.com'},
+  {icon:'🎬',name:'NETFLIX',url:'https://netflix.com'},
+  {icon:'📡',name:'REDDIT',url:'https://reddit.com'},
+  {icon:'📺',name:'TWITCH',url:'https://twitch.tv'},
+];
+let apps=JSON.parse(localStorage.getItem('mrd-apps')||'null')||DEF_APPS;
+let editIdx=null;
+function saveApps(){ localStorage.setItem('mrd-apps',JSON.stringify(apps)); }
+function renderApps(){
+  const g=$('agrid'); g.innerHTML='';
+  apps.forEach((a,i)=>{
+    const el=document.createElement('div');
+    el.className='app-item';
+    el.innerHTML=`<div class="ai">${a.icon}</div><div class="an">${a.name}</div>`;
+    let pt=null;
+    const open=()=>window.open(a.url,'_blank');
+    const edit=()=>openModal(i);
+    el.addEventListener('mousedown',()=>{ pt=setTimeout(()=>{pt=null;edit();},650); });
+    el.addEventListener('mouseup',()=>{ if(pt){clearTimeout(pt);pt=null;open();} });
+    el.addEventListener('mouseleave',()=>{ if(pt){clearTimeout(pt);pt=null;} });
+    el.addEventListener('touchstart',e=>{e.preventDefault();pt=setTimeout(()=>{pt=null;edit();},650);},{passive:false});
+    el.addEventListener('touchend',e=>{e.preventDefault();if(pt){clearTimeout(pt);pt=null;open();}});
+    g.appendChild(el);
+  });
+  const add=document.createElement('div');
+  add.className='app-item app-add';
+  add.innerHTML='<div class="ai">＋</div><div class="an">ADD</div>';
+  add.addEventListener('click',()=>openModal(-1));
+  g.appendChild(add);
+}
+function openModal(idx){
+  editIdx=idx; const isEdit=idx>=0;
+  $('mtitle').textContent=isEdit?'EDIT APP':'ADD APP';
+  $('micon').value=isEdit?apps[idx].icon:'🔗';
+  $('mname').value=isEdit?apps[idx].name:'';
+  $('murl').value=isEdit?apps[idx].url:'https://';
+  $('mdel').style.display=isEdit?'block':'none';
+  $('modal').classList.add('open'); $('mname').focus();
+}
+$('mcancel').addEventListener('click',()=>$('modal').classList.remove('open'));
+$('msave').addEventListener('click',()=>{
+  const icon=$('micon').value.trim()||'🔗';
+  const name=($('mname').value.trim()||'APP').toUpperCase();
+  const url=$('murl').value.trim()||'https://';
+  if(editIdx>=0) apps[editIdx]={icon,name,url};
+  else apps.push({icon,name,url});
+  saveApps(); renderApps(); $('modal').classList.remove('open');
+});
+$('mdel').addEventListener('click',()=>{
+  if(editIdx>=0 && confirm('Delete this app?')){
+    apps.splice(editIdx,1); saveApps(); renderApps(); $('modal').classList.remove('open');
+  }
+});
+$('modal').addEventListener('click',e=>{ if(e.target===$('modal'))$('modal').classList.remove('open'); });
+renderApps();
 
+/* ── HUB TABS ── */
 document.querySelectorAll('.hub-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.hub-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.hub-view').forEach(v=>v.classList.remove('active'));
     tab.classList.add('active');
-    const tabKey=tab.dataset.tab;
-    $('hub-body').innerHTML=hubContent[tabKey];
+    $('v'+tab.dataset.tab).classList.add('active');
+    if(tab.dataset.tab==='s') setTimeout(()=>$('sin').focus(),50);
+    if(tab.dataset.tab==='n') setTimeout(()=>$('narea').focus(),50);
   });
 });
-$('hub-body').innerHTML=hubContent['l'];
+
+/* ── NOTES ── */
+const na=$('narea');
+na.value=localStorage.getItem('mrd-notes')||'';
+function ncnt(){
+  const v=na.value;
+  const c=v.length, w=v.trim()?v.trim().split(/\s+/).length:0;
+  $('ncnt').textContent=`${c} CHARS · ${w} WORDS`;
+}
+na.addEventListener('input',()=>{ localStorage.setItem('mrd-notes',na.value); ncnt(); });
+$('nclr').addEventListener('click',()=>{
+  if(confirm('Clear all notes?')){ na.value=''; localStorage.removeItem('mrd-notes'); ncnt(); }
+});
+ncnt();
+
+/* ── SEARCH ── */
+const go=url=>window.open(url,'_blank');
+function execSearch(){
+  const q=$('sin').value.trim();
+  if(!q)return;
+  go(q.startsWith('http')?q:`https://www.google.com/search?q=${encodeURIComponent(q)}`);
+}
+$('sbtn').addEventListener('click',execSearch);
+$('sin').addEventListener('keydown',e=>{ if(e.key==='Enter')execSearch(); });
 
 /* ══════════════════════════════════════════════════════════
-   TASKS
+   TASKS PANEL
 ══════════════════════════════════════════════════════════ */
-let tasks=JSON.parse(localStorage.getItem('meridian_tasks'))||[
-  {text:'REVIEW COMMAND PROTOCOLS',done:false,p:0,id:1},
-  {text:'OPTIMIZE SIGNAL PROCESSING',done:false,p:1,id:2},
-  {text:'VERIFY SYSTEM DIAGNOSTICS',done:true,p:0,id:3}
-];
-function saveTasks(){ localStorage.setItem('meridian_tasks',JSON.stringify(tasks)); }
+const PCOLS=['rgba(255,255,255,0.18)','#FFB020','#FF4B6E'];
+let tasks=JSON.parse(localStorage.getItem('mrd-tasks')||'[]');
+function saveTasks(){ localStorage.setItem('mrd-tasks',JSON.stringify(tasks)); }
 function renderTasks(){
-  const list=$('tasklist'), active=tasks.filter(t=>!t.done), done=tasks.filter(t=>t.done);
-  list.innerHTML='';
-  active.concat(done).forEach((t,ri)=>{
+  const list=$('tlist'); list.innerHTML='';
+  const active=tasks.filter(t=>!t.done), done=tasks.filter(t=>t.done);
+  [...active,...done].forEach(task=>{
+    const ri=tasks.indexOf(task);
     const el=document.createElement('div');
-    el.className='task-item'+(t.done?' done':'');
-    el.innerHTML=`<div class="task-chk">${t.done?'✓':''}</div><div class="task-txt">${t.text}</div><button class="task-pri" title="Priority">⚡</button><button class="task-del" title="Delete">✕</button>`;
+    el.className='task-item'+(task.done?' done':'');
+    el.innerHTML=`
+      <div class="task-chk">${task.done?'✓':''}</div>
+      <div class="task-txt">${task.text}</div>
+      <div class="task-pri" style="background:${PCOLS[task.p||0]}" title="Priority: click to cycle"></div>
+      <button class="task-del">✕</button>`;
     el.querySelector('.task-chk').addEventListener('click',e=>{
-      e.stopPropagation(); tasks[tasks.indexOf(t)].done=!t.done; saveTasks(); renderTasks();
+      e.stopPropagation(); tasks[ri].done=!tasks[ri].done; saveTasks(); renderTasks();
     });
     el.querySelector('.task-pri').addEventListener('click',e=>{
-      e.stopPropagation(); tasks[tasks.indexOf(t)].p=((tasks[tasks.indexOf(t)].p||0)+1)%3; saveTasks(); renderTasks();
+      e.stopPropagation(); tasks[ri].p=((tasks[ri].p||0)+1)%3; saveTasks(); renderTasks();
     });
     el.querySelector('.task-del').addEventListener('click',e=>{
-      e.stopPropagation(); tasks.splice(tasks.indexOf(t),1); saveTasks(); renderTasks();
+      e.stopPropagation(); tasks.splice(ri,1); saveTasks(); renderTasks();
     });
     list.appendChild(el);
   });
@@ -904,6 +1196,7 @@ renderTasks();
   function resize(){ cvs.width=cvs.offsetWidth*devicePixelRatio; cvs.height=cvs.offsetHeight*devicePixelRatio; }
   resize(); window.addEventListener('resize',resize);
 
+  // VU bars
   const vw=$('vuwrap'), NUM=36, vuEls=[];
   for(let i=0;i<NUM;i++){
     const b=document.createElement('div'); b.className='vu-b';
@@ -920,19 +1213,26 @@ renderTasks();
       analyser.fftSize=256;
       dataArr=new Uint8Array(analyser.frequencyBinCount);
       audioCtx.createMediaStreamSource(stream).connect(analyser);
-      active=true; $('mstatus').textContent='MIC: ACTIVE — VISUALIZING';
-    } catch(e){ $('mstatus').textContent='MIC: UNAVAILABLE'; }
+      active=true; $('mstatus').textContent='MIC: ACTIVE — VISUALIZING AMBIENT AUDIO';
+    } catch(e){ $('mstatus').textContent='MIC: UNAVAILABLE — AMBIENT MODE'; }
   }
 
-  $('mplay').addEventListener('click',()=>{ if(!active) initAudio(); });
-  $('mprev').addEventListener('click',()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaTrackPrevious',keyCode:177,bubbles:true})));
-  $('mnext').addEventListener('click',()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaTrackNext',keyCode:176,bubbles:true})));
+  $('mplay').addEventListener('click',()=>{
+    if(!active) initAudio();
+    // Also try system media key
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaPlayPause',keyCode:179,bubbles:true}));
+  });
+  $('mprev').addEventListener('click',()=>
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaTrackPrevious',keyCode:177,bubbles:true})));
+  $('mnext').addEventListener('click',()=>
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'MediaTrackNext',keyCode:176,bubbles:true})));
 
   function draw(){
     const W=cvs.width, H=cvs.height;
     ctx.clearRect(0,0,W,H);
     if(active && analyser){ analyser.getByteFrequencyData(dataArr); }
     ph+=0.028;
+    // Waveform 1
     ctx.beginPath(); ctx.strokeStyle='rgba(0,210,185,0.65)'; ctx.lineWidth=1.6*devicePixelRatio;
     for(let i=0;i<80;i++){
       const x=(i/80)*W;
@@ -942,6 +1242,7 @@ renderTasks();
       i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.stroke();
+    // Waveform 2
     ctx.beginPath(); ctx.strokeStyle='rgba(123,111,232,0.4)'; ctx.lineWidth=1*devicePixelRatio;
     for(let i=0;i<80;i++){
       const x=(i/80)*W;
@@ -951,12 +1252,14 @@ renderTasks();
       i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.stroke();
+    // VU
     vuEls.forEach((b,i)=>{
       let h;
       if(active && dataArr){ const di=Math.floor(i/NUM*dataArr.length*0.65); h=dataArr[di]/255*100; }
       else { h=(Math.sin(i*0.38+ph*2.2)+1)*22+4+Math.random()*6; }
       b.style.height=clamp(h,4,100)+'%';
     });
+    // Media session
     if('mediaSession' in navigator && navigator.mediaSession.metadata){
       const meta=navigator.mediaSession.metadata;
       $('mtrack').textContent=meta.title||'UNKNOWN TRACK';
@@ -1015,7 +1318,7 @@ async function initSys(){
       <div class="sys-rd"><span>LOCALE</span>${navigator.language||'en-US'}</div>
       <hr class="sys-hr">
       <div class="sys-rd"><span>STATUS</span><span style="color:var(--accent)">NOMINAL</span></div>
-      <div class="sys-rd"><span>BUILD</span>MERIDIAN 2.0</div>
+      <div class="sys-rd"><span>BUILD</span>MERIDIAN 1.0</div>
     `;
   }
   setInterval(update,2500); update();
@@ -1056,6 +1359,7 @@ function hexToRgb(hex){
    KEYBOARD SHORTCUTS
 ══════════════════════════════════════════════════════════ */
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') $('modal').classList.remove('open');
   if(e.altKey){
     if(e.key==='1'){ document.querySelector('.hub-tab[data-tab="l"]').click(); e.preventDefault(); }
     if(e.key==='2'){ document.querySelector('.hub-tab[data-tab="n"]').click(); e.preventDefault(); }
@@ -1065,13 +1369,9 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ══════════════════════════════════════════════════════════
-   PANEL VISIBILITY ON BOOT
+   INIT
 ══════════════════════════════════════════════════════════ */
-window.addEventListener('load', ()=>{
-  document.querySelectorAll('.panel').forEach((p,i)=>{
-    setTimeout(()=>{ p.classList.add('on'); }, i*60);
-  });
-});
+window.addEventListener('load', runBoot);
 </script>
 </body>
 </html>
